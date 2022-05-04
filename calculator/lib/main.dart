@@ -117,8 +117,10 @@ class _CalculatorState extends State<Calculator> {
                           double res = eval(op!, prev!, curr!);
                           _update(res);
                           prev = res;
+                          curr = null;
                         } else {
                           prev = result;
+                          curr = null;
                         }
                         op = buttonVals[index];
                       };
