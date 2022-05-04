@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-int counter = 0;
 final List<String> buttonVals = [
   '7',
   '8',
@@ -14,7 +13,7 @@ final List<String> buttonVals = [
   '2',
   '3',
   '-',
-  '',
+  'C',
   '0',
   '=',
   '+',
@@ -50,14 +49,14 @@ class Calculator extends StatefulWidget {
 }
 
 class _CalculatorState extends State<Calculator> {
-  String _display = '0';
-  String _op = '';
-  int prev = -1;
-  int curr = -1;
+  double result = 0;
+  String? op;
+  double? prev;
+  double? curr;
 
-  void change(String num) {
+  void _update(double num) {
     setState(() {
-      _display = num;
+      result = num;
     });
   }
 
@@ -66,12 +65,12 @@ class _CalculatorState extends State<Calculator> {
     return Scaffold(
         backgroundColor: Colors.white,
         body: Column(children: [
-          /// The result tab
+          /// result tab
           Container(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(0, 88, 42, 20),
               child: Text(
-                _display.toString(),
+                result.toString(),
                 style: const TextStyle(
                     color: Colors.black,
                     fontSize: 50,
@@ -85,51 +84,97 @@ class _CalculatorState extends State<Calculator> {
             height: 168,
           ),
 
-          /// The buttons
-          Flexible(
+          /// button grid
+          Expanded(
               flex: 3,
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 4),
                 itemCount: buttonVals.length,
                 itemBuilder: (_, index) {
-                  if (buttonVals[index] == 'x') {
-                    return TextButton(
-                        onPressed: () {
-                          null;
-                        },
-                        child: Text(buttonVals[index]));
-                  } else if (buttonVals[index] == '/') {
-                    return TextButton(
-                        onPressed: () {
-                          null;
-                        },
-                        child: Text(buttonVals[index]));
-                  } else if (buttonVals[index] == '-') {
-                    return TextButton(
-                        onPressed: () {
-                          null;
-                        },
-                        child: Text(buttonVals[index]));
-                  } else if (buttonVals[index] == '+') {
-                    return TextButton(
-                        onPressed: () {
-                          null;
-                        },
-                        child: Text(buttonVals[index]));
-                  } else if (buttonVals[index] == '=') {
-                    return TextButton(
-                        onPressed: () {
-                          null;
-                        },
-                        child: Text(buttonVals[index]));
-                  } else {
-                    return TextButton(
-                        onPressed: () {
-                          change(buttonVals[index]);
-                        },
-                        child: Text(buttonVals[index]));
+                  void Function()? onPressFunction;
+
+                  double eval(String op, double x, double y) {
+                    if (op == 'x') {
+                      return (x * y).toDouble();
+                    } else if (op == '/') {
+                      return x / y;
+                    } else if (op == '-') {
+                      return (x - y).toDouble();
+                    }
+                    return (x + y).toDouble();
                   }
+
+                  switch (buttonVals[index]) {
+                    case 'x':
+                    case '/':
+                    case '-':
+                    case '+':
+                      {
+                        /// Only add operand when prev is not null
+                        onPressFunction = () {
+                          if (prev != null && op != null && curr != null) {
+                            double res = eval(op!, prev!, curr!);
+                            _update(res);
+                            prev = res;
+                          } else {
+                            prev = result;
+                          }
+                          op = buttonVals[index];
+                        };
+                        break;
+                      }
+                    case '=':
+                      {
+                        // Evals prev _op curr
+                        onPressFunction = () {
+                          if (prev != null && op != null && curr != null) {
+                            _update(eval(op!, prev!, curr!));
+                            op = null;
+                            prev = null;
+                            curr = null;
+                          }
+                        };
+                        break;
+                      }
+                    case 'C':
+                      // reset prev, _op, curr
+                      onPressFunction = () {
+                        _update(0);
+                        op = null;
+                        prev = null;
+                        curr = null;
+                      };
+                      break;
+                    default:
+                      onPressFunction = () {
+                        String newVal;
+                        if (op == null) {
+                          newVal = (prev ?? 0).toString() + buttonVals[index];
+                          prev = double.parse(newVal);
+                        } else {
+                          newVal = (curr ?? 0).toString() + buttonVals[index];
+                          curr = double.parse(newVal);
+                        }
+                        _update(double.parse(newVal));
+
+                        print('Previous; $prev');
+                        print('Op: $op');
+                        print('Current: $curr');
+                      };
+                      break;
+                  }
+
+                  return TextButton(
+                      onPressed: onPressFunction,
+                      child: Text(
+                        buttonVals[index],
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 37,
+                            fontFamily: "SF-Mono",
+                            fontWeight: FontWeight.bold),
+                      ));
                 },
                 physics: const NeverScrollableScrollPhysics(),
               ))
