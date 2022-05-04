@@ -1,23 +1,62 @@
 import 'package:flutter/material.dart';
 
-final List<String> buttonVals = [
-  '7',
-  '8',
-  '9',
-  'x',
-  '4',
-  '5',
-  '6',
-  '/',
-  '1',
-  '2',
-  '3',
-  '-',
-  'C',
-  '0',
-  '=',
-  '+',
-];
+enum Buttons {
+  seven,
+  eight,
+  nine,
+  mult,
+  four,
+  five,
+  six,
+  div,
+  one,
+  two,
+  three,
+  sub,
+  clear,
+  zero,
+  eq,
+  add,
+}
+
+extension GetVal on Buttons {
+  String get value {
+    switch (this) {
+      case Buttons.one:
+        return '1';
+      case Buttons.two:
+        return '2';
+      case Buttons.three:
+        return '3';
+      case Buttons.four:
+        return '4';
+      case Buttons.five:
+        return '5';
+      case Buttons.six:
+        return '6';
+      case Buttons.seven:
+        return '7';
+      case Buttons.eight:
+        return '8';
+      case Buttons.nine:
+        return '9';
+      case Buttons.zero:
+        return '0';
+      case Buttons.clear:
+        return 'C';
+      case Buttons.mult:
+        return 'x';
+      case Buttons.div:
+        return '/';
+      case Buttons.sub:
+        return '-';
+      case Buttons.add:
+        return '+';
+      case Buttons.eq:
+        return '=';
+    }
+  }
+}
 
 void main() {
   runApp(const MyApp());
@@ -30,11 +69,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'ProtoCalculator',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const Calculator(title: 'Flutter Demo Home Page'),
+      home: const Calculator(title: 'ProtoCalculator'),
     );
   }
 }
@@ -58,6 +97,17 @@ class _CalculatorState extends State<Calculator> {
     setState(() {
       result = num;
     });
+  }
+
+  double _eval(String op, double x, double y) {
+    if (op == 'x') {
+      return (x * y).toDouble();
+    } else if (op == '/') {
+      return x / y;
+    } else if (op == '-') {
+      return (x - y).toDouble();
+    }
+    return (x + y).toDouble();
   }
 
   @override
@@ -90,31 +140,20 @@ class _CalculatorState extends State<Calculator> {
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 4),
-                itemCount: buttonVals.length,
+                itemCount: Buttons.values.length,
                 itemBuilder: (_, index) {
                   void Function()? onPressFunction;
 
-                  double eval(String op, double x, double y) {
-                    if (op == 'x') {
-                      return (x * y).toDouble();
-                    } else if (op == '/') {
-                      return x / y;
-                    } else if (op == '-') {
-                      return (x - y).toDouble();
-                    }
-                    return (x + y).toDouble();
-                  }
-
-                  switch (buttonVals[index]) {
-                    case 'x':
-                    case '/':
-                    case '-':
-                    case '+':
+                  switch (Buttons.values[index]) {
+                    case Buttons.mult:
+                    case Buttons.div:
+                    case Buttons.sub:
+                    case Buttons.add:
 
                       /// Op
                       onPressFunction = () {
                         if (prev != null && op != null && curr != null) {
-                          double res = eval(op!, prev!, curr!);
+                          double res = _eval(op!, prev!, curr!);
                           _update(res);
                           prev = res;
                           curr = null;
@@ -122,21 +161,21 @@ class _CalculatorState extends State<Calculator> {
                           prev = result;
                           curr = null;
                         }
-                        op = buttonVals[index];
+                        op = Buttons.values[index].value;
                       };
                       break;
 
-                    case '=':
+                    case Buttons.eq:
                       // Eval
                       onPressFunction = () {
                         if (prev != null && op != null && curr != null) {
-                          _update(eval(op!, prev!, curr!));
+                          _update(_eval(op!, prev!, curr!));
                           op = prev = curr = null;
                         }
                       };
                       break;
 
-                    case 'C':
+                    case Buttons.clear:
                       // Reset
                       onPressFunction = () {
                         _update(0);
@@ -149,17 +188,19 @@ class _CalculatorState extends State<Calculator> {
                       onPressFunction = () {
                         String newVal;
                         if (op == null) {
-                          newVal = (prev ?? 0).toString() + buttonVals[index];
+                          newVal = (prev ?? 0).toString() +
+                              Buttons.values[index].value;
                           prev = double.parse(newVal);
                         } else {
-                          newVal = (curr ?? 0).toString() + buttonVals[index];
+                          newVal = (curr ?? 0).toString() +
+                              Buttons.values[index].value;
                           curr = double.parse(newVal);
                         }
                         _update(double.parse(newVal));
 
-                        print('Previous; $prev');
-                        print('Op: $op');
-                        print('Current: $curr');
+                        // print('Previous; $prev');
+                        // print('Op: $op');
+                        // print('Current: $curr');
                       };
                       break;
                   }
@@ -167,7 +208,7 @@ class _CalculatorState extends State<Calculator> {
                   return TextButton(
                       onPressed: onPressFunction,
                       child: Text(
-                        buttonVals[index],
+                        Buttons.values[index].value,
                         style: const TextStyle(
                             color: Colors.black,
                             fontSize: 37,
