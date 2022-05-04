@@ -93,13 +93,13 @@ class _CalculatorState extends State<Calculator> {
   double? prev;
   double? curr;
 
-  void _update(double num) {
+  void _update({required double num}) {
     setState(() {
       result = num;
     });
   }
 
-  double _eval(String op, double x, double y) {
+  double _eval({required String op, required double x, required double y}) {
     if (op == 'x') {
       return (x * y).toDouble();
     } else if (op == '/') {
@@ -153,8 +153,8 @@ class _CalculatorState extends State<Calculator> {
                       /// Op
                       onPressFunction = () {
                         if (prev != null && op != null && curr != null) {
-                          double res = _eval(op!, prev!, curr!);
-                          _update(res);
+                          double res = _eval(op: op!, x: prev!, y: curr!);
+                          _update(num: res);
                           prev = res;
                           curr = null;
                         } else {
@@ -169,7 +169,7 @@ class _CalculatorState extends State<Calculator> {
                       // Eval
                       onPressFunction = () {
                         if (prev != null && op != null && curr != null) {
-                          _update(_eval(op!, prev!, curr!));
+                          _update(num: _eval(op: op!, x: prev!, y: curr!));
                           op = prev = curr = null;
                         }
                       };
@@ -178,7 +178,7 @@ class _CalculatorState extends State<Calculator> {
                     case Buttons.clear:
                       // Reset
                       onPressFunction = () {
-                        _update(0);
+                        _update(num: 0);
                         op = prev = curr = null;
                       };
                       break;
@@ -196,7 +196,7 @@ class _CalculatorState extends State<Calculator> {
                               Buttons.values[index].value;
                           curr = double.parse(newVal);
                         }
-                        _update(double.parse(newVal));
+                        _update(num: double.parse(newVal));
 
                         // print('Previous; $prev');
                         // print('Op: $op');
