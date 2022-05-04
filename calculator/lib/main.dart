@@ -110,43 +110,40 @@ class _CalculatorState extends State<Calculator> {
                     case '/':
                     case '-':
                     case '+':
-                      {
-                        /// Only add operand when prev is not null
-                        onPressFunction = () {
-                          if (prev != null && op != null && curr != null) {
-                            double res = eval(op!, prev!, curr!);
-                            _update(res);
-                            prev = res;
-                          } else {
-                            prev = result;
-                          }
-                          op = buttonVals[index];
-                        };
-                        break;
-                      }
-                    case '=':
-                      {
-                        // Evals prev _op curr
-                        onPressFunction = () {
-                          if (prev != null && op != null && curr != null) {
-                            _update(eval(op!, prev!, curr!));
-                            op = null;
-                            prev = null;
-                            curr = null;
-                          }
-                        };
-                        break;
-                      }
-                    case 'C':
-                      // reset prev, _op, curr
+
+                      /// Op
                       onPressFunction = () {
-                        _update(0);
-                        op = null;
-                        prev = null;
-                        curr = null;
+                        if (prev != null && op != null && curr != null) {
+                          double res = eval(op!, prev!, curr!);
+                          _update(res);
+                          prev = res;
+                        } else {
+                          prev = result;
+                        }
+                        op = buttonVals[index];
                       };
                       break;
+
+                    case '=':
+                      // Eval
+                      onPressFunction = () {
+                        if (prev != null && op != null && curr != null) {
+                          _update(eval(op!, prev!, curr!));
+                          op = prev = curr = null;
+                        }
+                      };
+                      break;
+
+                    case 'C':
+                      // Reset
+                      onPressFunction = () {
+                        _update(0);
+                        op = prev = curr = null;
+                      };
+                      break;
+
                     default:
+                      // General buttons
                       onPressFunction = () {
                         String newVal;
                         if (op == null) {

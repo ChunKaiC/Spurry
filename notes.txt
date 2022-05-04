@@ -1,0 +1,44 @@
+- Standup schedule
+  - 11:00 am
+  - What kind of strategy are we employing?
+  - Monday to thursday
+
+- Github id
+  - Use pre-existing or new?
+  - private?
+
+- Figma email
+  - this is a platform for developing, brainstorming, and designing
+  - used for the incoming app ideas?
+
+- Company email
+
+- Google chat group
+  - Google chat room
+
+- Vacation
+  - 15 days with flex
+
+- Flutter starter project
+  - Resources to learn Flutter
+  - What deliverable is expected?
+  - What is the time frame?
+  - vscode, chrome to emulate
+  - stateful widgets (basically set state) might be confusing, provider - (blurred) - bloc, context
+
+
+- laptops
+  - Since we are developing apps how can we emulate android/ios environments?
+  - macbooks? since ios environment may be exclusive
+  - budget?
+  - pick up?
+  - SSH available?
+  - 14-inch base 8 core pro m1 chip
+
+- Direct deposit info
+  - Form downloaded
+
+- dart, typescript, null safety, asynchs 0-8 (promises), cascading operators?
+- flutter doctor
+
+- flutter run -d chrome
