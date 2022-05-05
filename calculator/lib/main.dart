@@ -88,14 +88,14 @@ class Calculator extends StatefulWidget {
 }
 
 class _CalculatorState extends State<Calculator> {
-  double result = 0;
-  String? op;
-  double? prev;
-  double? curr;
+  double _result = 0;
+  String? _op;
+  double? _prev;
+  double? _curr;
 
   void _update({required double num}) {
     setState(() {
-      result = num;
+      _result = num;
     });
   }
 
@@ -112,6 +112,7 @@ class _CalculatorState extends State<Calculator> {
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData queryData = MediaQuery.of(context);
     return Scaffold(
         backgroundColor: Colors.white,
         body: Column(children: [
@@ -120,7 +121,7 @@ class _CalculatorState extends State<Calculator> {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(0, 88, 42, 20),
               child: Text(
-                result.toString(),
+                _result.toString(),
                 style: const TextStyle(
                     color: Colors.black,
                     fontSize: 50,
@@ -129,7 +130,7 @@ class _CalculatorState extends State<Calculator> {
               ),
             ),
             color: const Color(0xFFF8F8F8),
-            width: MediaQuery.of(context).size.width,
+            width: queryData.size.width,
             alignment: Alignment.bottomRight,
             height: 168,
           ),
@@ -138,7 +139,8 @@ class _CalculatorState extends State<Calculator> {
           Expanded(
               flex: 3,
               child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    mainAxisExtent: (queryData.size.height - 168) / 4,
                     crossAxisCount: 4),
                 itemCount: Buttons.values.length,
                 itemBuilder: (_, index) {
@@ -152,25 +154,25 @@ class _CalculatorState extends State<Calculator> {
 
                       /// Op
                       onPressFunction = () {
-                        if (prev != null && op != null && curr != null) {
-                          double res = _eval(op: op!, x: prev!, y: curr!);
+                        if (_prev != null && _op != null && _curr != null) {
+                          double res = _eval(op: _op!, x: _prev!, y: _curr!);
                           _update(num: res);
-                          prev = res;
-                          curr = null;
+                          _prev = res;
+                          _curr = null;
                         } else {
-                          prev = result;
-                          curr = null;
+                          _prev = _result;
+                          _curr = null;
                         }
-                        op = Buttons.values[index].value;
+                        _op = Buttons.values[index].value;
                       };
                       break;
 
                     case Buttons.eq:
                       // Eval
                       onPressFunction = () {
-                        if (prev != null && op != null && curr != null) {
-                          _update(num: _eval(op: op!, x: prev!, y: curr!));
-                          op = prev = curr = null;
+                        if (_prev != null && _op != null && _curr != null) {
+                          _update(num: _eval(op: _op!, x: _prev!, y: _curr!));
+                          _op = _prev = _curr = null;
                         }
                       };
                       break;
@@ -179,7 +181,7 @@ class _CalculatorState extends State<Calculator> {
                       // Reset
                       onPressFunction = () {
                         _update(num: 0);
-                        op = prev = curr = null;
+                        _op = _prev = _curr = null;
                       };
                       break;
 
@@ -187,14 +189,14 @@ class _CalculatorState extends State<Calculator> {
                       // General buttons
                       onPressFunction = () {
                         String newVal;
-                        if (op == null) {
-                          newVal = (prev ?? 0).toString() +
+                        if (_op == null) {
+                          newVal = (_prev ?? 0).toString() +
                               Buttons.values[index].value;
-                          prev = double.parse(newVal);
+                          _prev = double.parse(newVal);
                         } else {
-                          newVal = (curr ?? 0).toString() +
+                          newVal = (_curr ?? 0).toString() +
                               Buttons.values[index].value;
-                          curr = double.parse(newVal);
+                          _curr = double.parse(newVal);
                         }
                         _update(num: double.parse(newVal));
 
