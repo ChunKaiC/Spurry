@@ -2,14 +2,10 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
 class Calculator extends Equatable {
-  final double _result = 0;
-  final String? _op = null;
-  final double? _prev = null;
-  final double? _curr = null;
+  final double result;
 
-  const Calculator();
+  const Calculator({this.result = 0});
 
   @override
-  // TODO: implement props
-  List<Object?> get props => throw UnimplementedError();
+  List<Object> get props => [result];
 }

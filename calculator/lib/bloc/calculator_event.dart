@@ -67,4 +67,11 @@ abstract class CalculatorEvent extends Equatable {
 
 class LoadCalculator extends CalculatorEvent {}
 
-class OnPress extends CalculatorEvent {}
+class OnPress extends CalculatorEvent {
+  final int buttonIndex;
+
+  const OnPress(this.buttonIndex);
+
+  @override
+  List<Object> get props => [buttonIndex];
+}
