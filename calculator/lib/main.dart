@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+const int resultHeight = 168;
+
 enum Buttons {
   seven,
   eight,
@@ -189,7 +191,7 @@ class _CalculatorState extends State<Calculator> {
             color: const Color(0xFFF8F8F8),
             width: queryData.size.width,
             alignment: Alignment.bottomRight,
-            height: 168,
+            height: resultHeight.toDouble(),
           ),
 
           /// button grid
@@ -197,7 +199,7 @@ class _CalculatorState extends State<Calculator> {
               flex: 3,
               child: GridView.builder(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    mainAxisExtent: (queryData.size.height - 168) / 4,
+                    mainAxisExtent: (queryData.size.height - resultHeight) / 4,
                     crossAxisCount: 4),
                 itemCount: Buttons.values.length,
                 itemBuilder: (_, index) {
@@ -208,7 +210,6 @@ class _CalculatorState extends State<Calculator> {
                         style: const TextStyle(
                             color: Colors.black,
                             fontSize: 37,
-                            fontFamily: "SF-Mono",
                             fontWeight: FontWeight.bold),
                       ));
                 },
