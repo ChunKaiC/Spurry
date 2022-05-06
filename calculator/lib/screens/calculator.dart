@@ -58,16 +58,16 @@ extension GetVal on Buttons {
   }
 }
 
-class StateCalculator extends StatefulWidget {
-  const StateCalculator({Key? key, required this.title}) : super(key: key);
+class Calculator extends StatefulWidget {
+  const Calculator({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
   @override
-  State<StateCalculator> createState() => _CalculatorState();
+  State<Calculator> createState() => _CalculatorState();
 }
 
-class _CalculatorState extends State<StateCalculator> {
+class _CalculatorState extends State<Calculator> {
   double _result = 0;
   String? _op;
   double? _prev;
