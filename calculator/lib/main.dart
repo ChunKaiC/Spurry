@@ -184,7 +184,6 @@ class _CalculatorState extends State<Calculator> {
                 style: const TextStyle(
                     color: Colors.black,
                     fontSize: 50,
-                    fontFamily: "SF-Mono",
                     fontWeight: FontWeight.bold),
               ),
             ),
