@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 const int resultHeight = 168;
 
@@ -61,7 +62,9 @@ extension GetVal on Buttons {
 }
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => CalculatorProvider())],
+      child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -80,25 +83,67 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class Calculator extends StatefulWidget {
+class Calculator extends StatelessWidget {
   const Calculator({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
   @override
-  State<Calculator> createState() => _CalculatorState();
+  Widget build(BuildContext context) {
+    MediaQueryData queryData = MediaQuery.of(context);
+    return Scaffold(
+        backgroundColor: Colors.white,
+        body: Column(children: [
+          /// result tab
+          Container(
+            child: const Padding(
+              padding: EdgeInsets.fromLTRB(0, 88, 42, 20),
+              child: Result(),
+            ),
+            color: const Color(0xFFF8F8F8),
+            width: queryData.size.width,
+            alignment: Alignment.bottomRight,
+            height: resultHeight.toDouble(),
+          ),
+
+          /// button grid
+          Expanded(
+              flex: 3,
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    mainAxisExtent: (queryData.size.height - resultHeight) / 4,
+                    crossAxisCount: 4),
+                itemCount: Buttons.values.length,
+                itemBuilder: (_, index) {
+                  return TextButton(
+                      onPressed: () => context
+                          .read<CalculatorProvider>()
+                          ._onPressFunction(index: index),
+                      child: Text(
+                        Buttons.values[index].value,
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontSize: 37,
+                            fontWeight: FontWeight.bold),
+                      ));
+                },
+                physics: const NeverScrollableScrollPhysics(),
+              ))
+        ]));
+  }
 }
 
-class _CalculatorState extends State<Calculator> {
+class CalculatorProvider with ChangeNotifier {
   double _result = 0;
   String? _op;
   double? _prev;
   double? _curr;
 
+  double get result => _result;
+
   void _update({required double num}) {
-    setState(() {
-      _result = num;
-    });
+    _result = num;
+    notifyListeners();
   }
 
   double _eval({required String op, required double x, required double y}) {
@@ -168,52 +213,17 @@ class _CalculatorState extends State<Calculator> {
         }
     }
   }
+}
+
+class Result extends StatelessWidget {
+  const Result({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    MediaQueryData queryData = MediaQuery.of(context);
-    return Scaffold(
-        backgroundColor: Colors.white,
-        body: Column(children: [
-          /// result tab
-          Container(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 88, 42, 20),
-              child: Text(
-                _result.toString(),
-                style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 50,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-            color: const Color(0xFFF8F8F8),
-            width: queryData.size.width,
-            alignment: Alignment.bottomRight,
-            height: resultHeight.toDouble(),
-          ),
-
-          /// button grid
-          Expanded(
-              flex: 3,
-              child: GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    mainAxisExtent: (queryData.size.height - resultHeight) / 4,
-                    crossAxisCount: 4),
-                itemCount: Buttons.values.length,
-                itemBuilder: (_, index) {
-                  return TextButton(
-                      onPressed: () => _onPressFunction(index: index),
-                      child: Text(
-                        Buttons.values[index].value,
-                        style: const TextStyle(
-                            color: Colors.black,
-                            fontSize: 37,
-                            fontWeight: FontWeight.bold),
-                      ));
-                },
-                physics: const NeverScrollableScrollPhysics(),
-              ))
-        ]));
+    return Text(
+      (context.watch<CalculatorProvider>().result).toString(),
+      style: const TextStyle(
+          color: Colors.black, fontSize: 50, fontWeight: FontWeight.bold),
+    );
   }
 }
