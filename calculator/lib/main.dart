@@ -153,8 +153,10 @@ class CalculatorProvider with ChangeNotifier {
   double get result => _result;
 
   void _update({required double num}) {
-    _result = num;
-    notifyListeners();
+    if (_result != num) {
+      _result = num;
+      notifyListeners();
+    }
   }
 
   double _eval({required String op, required double x, required double y}) {
