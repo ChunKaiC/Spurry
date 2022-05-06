@@ -83,6 +83,7 @@ class MyApp extends StatelessWidget {
   }
 }
 
+// Main widget
 class Calculator extends StatelessWidget {
   const Calculator({Key? key, required this.title}) : super(key: key);
 
@@ -133,6 +134,7 @@ class Calculator extends StatelessWidget {
   }
 }
 
+// Provider, handles logic
 class CalculatorProvider with ChangeNotifier {
   double _result = 0;
   String? _op;
@@ -215,6 +217,8 @@ class CalculatorProvider with ChangeNotifier {
   }
 }
 
+// This is the consumer widget, calls provider and re-renders minimally
+// Better than setState since in setState you are forced into one widget :(
 class Result extends StatelessWidget {
   const Result({Key? key}) : super(key: key);
 
