@@ -97,9 +97,18 @@ class Calculator extends StatelessWidget {
         body: Column(children: [
           /// result tab
           Container(
-            child: const Padding(
-              padding: EdgeInsets.fromLTRB(0, 88, 42, 20),
-              child: Result(),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 88, 42, 20),
+              // Consumer, used for minimal re-renderingr
+              child: Consumer<CalculatorProvider>(
+                builder: (context, provider, child) => Text(
+                  (provider.result).toString(),
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold),
+                ),
+              ),
             ),
             color: const Color(0xFFF8F8F8),
             width: queryData.size.width,
@@ -214,20 +223,5 @@ class CalculatorProvider with ChangeNotifier {
           break;
         }
     }
-  }
-}
-
-// This is the consumer widget, calls provider and re-renders minimally
-// Better than setState since in setState you are forced into one widget :(
-class Result extends StatelessWidget {
-  const Result({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      (context.watch<CalculatorProvider>().result).toString(),
-      style: const TextStyle(
-          color: Colors.black, fontSize: 50, fontWeight: FontWeight.bold),
-    );
   }
 }
