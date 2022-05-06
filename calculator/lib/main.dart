@@ -128,7 +128,7 @@ class Calculator extends StatelessWidget {
                   return TextButton(
                       onPressed: () => context
                           .read<CalculatorProvider>()
-                          ._onPressFunction(index: index),
+                          .onPressFunction(index: index),
                       child: Text(
                         Buttons.values[index].value,
                         style: const TextStyle(
@@ -168,7 +168,7 @@ class CalculatorProvider with ChangeNotifier {
     return (x + y).toDouble();
   }
 
-  void _onPressFunction({required int index}) {
+  void onPressFunction({required int index}) {
     switch (Buttons.values[index]) {
       case Buttons.mult:
       case Buttons.div:
