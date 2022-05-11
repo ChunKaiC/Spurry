@@ -8,15 +8,17 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Login Page'),
+          title: Center(child: Text('Login Page')),
         ),
-        body: ElevatedButton.icon(
-            onPressed: () {
-              final provider =
-                  Provider.of<GoogleSignInProvider>(context, listen: false);
-              provider.googleLogin();
-            },
-            icon: FaIcon(FontAwesomeIcons.google),
-            label: Text('Sign up with Google.')));
+        body: Center(
+          child: ElevatedButton.icon(
+              onPressed: () {
+                final provider =
+                    Provider.of<GoogleSignInProvider>(context, listen: false);
+                provider.googleLogin();
+              },
+              icon: FaIcon(FontAwesomeIcons.google),
+              label: Text('Login with Google')),
+        ));
   }
 }
