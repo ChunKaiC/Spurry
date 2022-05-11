@@ -92,8 +92,8 @@ class Calculator extends StatefulWidget {
 class _CalculatorState extends State<Calculator> {
   double _result = 0;
   String? _op;
-  double? _prev;
-  double? _curr;
+  String? _prev;
+  String? _curr;
 
   void _update({required double num}) {
     setState(() {
@@ -101,15 +101,15 @@ class _CalculatorState extends State<Calculator> {
     });
   }
 
-  double _eval({required String op, required double x, required double y}) {
+  double _eval({required String op, required String x, required String y}) {
     if (op == 'x') {
-      return (x * y).toDouble();
+      return (double.parse(x) * double.parse(y));
     } else if (op == '/') {
-      return x / y;
+      return (double.parse(x) / double.parse(y));
     } else if (op == '-') {
-      return (x - y).toDouble();
+      return (double.parse(x) - double.parse(y));
     }
-    return (x + y).toDouble();
+    return (double.parse(x) + double.parse(y));
   }
 
   void _onPressFunction({required int index}) {
@@ -124,10 +124,10 @@ class _CalculatorState extends State<Calculator> {
           if (_prev != null && _op != null && _curr != null) {
             double res = _eval(op: _op!, x: _prev!, y: _curr!);
             _update(num: res);
-            _prev = res;
+            _prev = res.toString();
             _curr = null;
           } else {
-            _prev = _result;
+            _prev = _result.toString();
             _curr = null;
           }
           _op = Buttons.values[index].value;
@@ -157,11 +157,11 @@ class _CalculatorState extends State<Calculator> {
         {
           String newVal;
           if (_op == null) {
-            newVal = (_prev ?? 0).toString() + Buttons.values[index].value;
-            _prev = double.parse(newVal);
+            newVal = (_prev ?? '0').toString() + Buttons.values[index].value;
+            _prev = newVal;
           } else {
-            newVal = (_curr ?? 0).toString() + Buttons.values[index].value;
-            _curr = double.parse(newVal);
+            newVal = (_curr ?? '0').toString() + Buttons.values[index].value;
+            _curr = newVal;
           }
           _update(num: double.parse(newVal));
           break;
