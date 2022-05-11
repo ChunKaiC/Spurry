@@ -8,7 +8,7 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Center(child: Text('Login Page')),
+          title: const Center(child: Text('Login Page')),
         ),
         body: Center(
           child: ElevatedButton.icon(
@@ -17,8 +17,8 @@ class LoginPage extends StatelessWidget {
                     Provider.of<GoogleSignInProvider>(context, listen: false);
                 provider.googleLogin();
               },
-              icon: FaIcon(FontAwesomeIcons.google),
-              label: Text('Login/Signup with Google')),
+              icon: const FaIcon(FontAwesomeIcons.google),
+              label: const Text('Login/Signup with Google')),
         ));
   }
 }
