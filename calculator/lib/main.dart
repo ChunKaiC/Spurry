@@ -187,16 +187,18 @@ class _CalculatorState extends State<Calculator> {
                     fontWeight: FontWeight.bold),
               ),
             ),
-            color: const Color(0xFFF8F8F8),
+            color: Colors.blue,
+            // color: const Color(0xFFF8F8F8),
             width: queryData.size.width,
             alignment: Alignment.bottomRight,
             height: resultHeight.toDouble(),
           ),
 
           /// button grid
-          Expanded(
+          Flexible(
               flex: 3,
               child: GridView.builder(
+                padding: const EdgeInsets.all(0),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     mainAxisExtent: (queryData.size.height - resultHeight) / 4,
                     crossAxisCount: 4),
