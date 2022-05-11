@@ -18,7 +18,7 @@ class LoginPage extends StatelessWidget {
                 provider.googleLogin();
               },
               icon: FaIcon(FontAwesomeIcons.google),
-              label: Text('Login with Google')),
+              label: Text('Login/Signup with Google')),
         ));
   }
 }

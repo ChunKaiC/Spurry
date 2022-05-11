@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 
 const int resultHeight = 168;
+const int avatarWidth = 100;
 
 enum Buttons {
   seven,
@@ -121,6 +122,7 @@ class Calculator extends StatefulWidget {
 }
 
 class _CalculatorState extends State<Calculator> {
+  final user = FirebaseAuth.instance.currentUser;
   double _result = 0;
   String? _op;
   String? _prev;
@@ -205,20 +207,39 @@ class _CalculatorState extends State<Calculator> {
     MediaQueryData queryData = MediaQuery.of(context);
     return Column(children: [
       /// result tab
-      Container(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(0, 88, 42, 20),
-          child: Text(
-            _result.toString(),
-            style: const TextStyle(
-                color: Colors.black, fontSize: 50, fontWeight: FontWeight.bold),
+      Row(
+        children: [
+          Container(
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: CircleAvatar(
+                radius: avatarWidth.toDouble(),
+                backgroundImage: NetworkImage(user!.photoURL!),
+              ),
+            ),
+            width: avatarWidth.toDouble(),
+            height: resultHeight.toDouble(),
+            color: Colors.blue,
+            alignment: Alignment.bottomRight,
           ),
-        ),
-        color: Colors.blue,
-        // color: const Color(0xFFF8F8F8),
-        width: queryData.size.width,
-        alignment: Alignment.bottomRight,
-        height: resultHeight.toDouble(),
+          Container(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 88, 42, 20),
+              child: Text(
+                _result.toString(),
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 50,
+                    fontWeight: FontWeight.bold),
+              ),
+            ),
+            color: Colors.blue,
+            // color: const Color(0xFFF8F8F8),
+            width: queryData.size.width - avatarWidth,
+            alignment: Alignment.bottomRight,
+            height: resultHeight.toDouble(),
+          )
+        ],
       ),
 
       /// button grid
