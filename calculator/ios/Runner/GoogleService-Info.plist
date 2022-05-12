@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>517989564355-o0hc75mebvea0b3gm03c52skshuhos3l.apps.googleusercontent.com</string>
+	<string>517989564355-1nmfmm0hs684l004s6e01almc4bsed97.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.517989564355-o0hc75mebvea0b3gm03c52skshuhos3l</string>
+	<string>com.googleusercontent.apps.517989564355-1nmfmm0hs684l004s6e01almc4bsed97</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>517989564355-hp0edae73lcb053q12g2dd8mhuai27c0.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.example.calculator</string>
+	<string>co.spurry.calculator.fluttersignin</string>
 	<key>PROJECT_ID</key>
 	<string>protocalculator-3b293</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:517989564355:ios:4926340e6e9d332f540776</string>
+	<string>1:517989564355:ios:e46f55a847927d1d540776</string>
 </dict>
 </plist>
