@@ -13,6 +13,13 @@ class LoginPage extends StatelessWidget {
         body: Center(
           child: Column(
             children: [
+              SizedBox(height: 50),
+              SizedBox(
+                width: 200,
+                height: 200,
+                child: const FlutterLogo(),
+              ),
+              SizedBox(height: 50),
               ElevatedButton.icon(
                   onPressed: () {
                     final provider =
@@ -27,7 +34,7 @@ class LoginPage extends StatelessWidget {
                         Provider.of<SignInProvider>(context, listen: false);
                     provider.appleLogin();
                   },
-                  icon: const FaIcon(FontAwesomeIcons.google),
+                  icon: const FaIcon(FontAwesomeIcons.apple),
                   label: const Text('Login/Signup with Apple ID')),
             ],
           ),
