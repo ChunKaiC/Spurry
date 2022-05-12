@@ -1,4 +1,4 @@
-import 'package:calculator/GoogleSignInProvider.dart';
+import 'package:calculator/SignInProvider.dart';
 import 'package:calculator/LoginPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
