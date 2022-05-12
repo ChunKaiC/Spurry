@@ -170,27 +170,30 @@ class _CalculatorState extends State<Calculator> {
             color: Colors.blue,
             child: Row(
               children: [
+                Container(
+                  height: infoHeight.toDouble(),
+                  width: avatarWidth.toDouble() + 20,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
+                    child: ElevatedButton(
+                        onPressed: () {
+                          final provider = Provider.of<SignInProvider>(context,
+                              listen: false);
+                          provider.logout();
+                        },
+                        child: const Text('Logout!')),
+                  ),
+                ),
                 Expanded(
                     child: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 10, 0, 0),
-                  child: Text(user!.email!),
+                  child: Text('User: ' + user!.email!),
                   // ),
                   // width: 100,
                   // height: infoHeight.toDouble(),
                   // color: Colors.blue,
                   // alignment: Alignment.bottomRight,
                 )),
-                Container(
-                  height: infoHeight.toDouble(),
-                  width: avatarWidth.toDouble(),
-                  child: ElevatedButton(
-                      onPressed: () {
-                        final provider =
-                            Provider.of<SignInProvider>(context, listen: false);
-                        provider.logout();
-                      },
-                      child: const Text('Logout!')),
-                ),
               ],
             ),
           ),

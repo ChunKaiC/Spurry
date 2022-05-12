@@ -44,7 +44,7 @@ class SignInProvider extends ChangeNotifier {
       final googleSignIn = GoogleSignIn();
       await googleSignIn.disconnect();
     } else if (type == SignInType.apple) {
-      print('hello');
+      print('Signing out from apple device!');
     }
     FirebaseAuth.instance.signOut();
   }
