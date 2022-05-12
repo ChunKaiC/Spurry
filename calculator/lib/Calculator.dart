@@ -163,18 +163,34 @@ class _CalculatorState extends State<Calculator> {
       /// result tab
       Row(
         children: [
-          Container(
-            child: Padding(
-              padding: const EdgeInsets.all(10),
-              child: CircleAvatar(
-                radius: avatarWidth.toDouble(),
-                backgroundImage: NetworkImage(user!.photoURL!),
+          Column(
+            children: [
+              Container(
+                child: Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: CircleAvatar(
+                    radius: avatarWidth.toDouble(),
+                    //backgroundImage: NetworkImage(user!.photoURL!),
+                  ),
+                ),
+                width: avatarWidth.toDouble(),
+                height: resultHeight.toDouble() - 20,
+                color: Colors.blue,
+                alignment: Alignment.bottomRight,
               ),
-            ),
-            width: avatarWidth.toDouble(),
-            height: resultHeight.toDouble(),
-            color: Colors.blue,
-            alignment: Alignment.bottomRight,
+              Container(
+                height: 20,
+                width: avatarWidth.toDouble(),
+                color: Colors.blue,
+                child: ElevatedButton(
+                    onPressed: () {
+                      final provider =
+                          Provider.of<SignInProvider>(context, listen: false);
+                      provider.logout();
+                    },
+                    child: const Text('Logout!')),
+              ),
+            ],
           ),
           Container(
             child: Padding(

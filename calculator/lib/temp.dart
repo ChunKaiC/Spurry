@@ -9,18 +9,11 @@ enum SignInStates {
   signingIn,
 }
 
-enum SignInType {
-  apple,
-  google,
-}
-
 class SignInProvider extends ChangeNotifier {
   SignInStates state = SignInStates.notSignedIn;
-  SignInType? type;
 
   googleLogin() async {
     state = SignInStates.signingIn;
-    type = SignInType.google;
 
     final googleSignIn = GoogleSignIn();
 
@@ -39,20 +32,7 @@ class SignInProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future logout() async {
-    if (type == SignInType.google) {
-      final googleSignIn = GoogleSignIn();
-      await googleSignIn.disconnect();
-    } else if (type == SignInType.apple) {
-      print('hello');
-    }
-    FirebaseAuth.instance.signOut();
-  }
-
   appleLogin() async {
-    state = SignInStates.signingIn;
-    type = SignInType.apple;
-
     // authenticate login
     final credential = await SignInWithApple.getAppleIDCredential(
       scopes: [
@@ -68,8 +48,5 @@ class SignInProvider extends ChangeNotifier {
         idToken: credential.identityToken);
 
     await FirebaseAuth.instance.signInWithCredential(newCred);
-
-    state = SignInStates.signingIn;
-    notifyListeners();
   }
 }

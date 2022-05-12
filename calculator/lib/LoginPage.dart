@@ -11,14 +11,26 @@ class LoginPage extends StatelessWidget {
           title: const Center(child: Text('Login Page')),
         ),
         body: Center(
-          child: ElevatedButton.icon(
-              onPressed: () {
-                final provider =
-                    Provider.of<GoogleSignInProvider>(context, listen: false);
-                provider.googleLogin();
-              },
-              icon: const FaIcon(FontAwesomeIcons.google),
-              label: const Text('Login/Signup with Google')),
+          child: Column(
+            children: [
+              ElevatedButton.icon(
+                  onPressed: () {
+                    final provider =
+                        Provider.of<SignInProvider>(context, listen: false);
+                    provider.googleLogin();
+                  },
+                  icon: const FaIcon(FontAwesomeIcons.google),
+                  label: const Text('Login/Signup with Google')),
+              ElevatedButton.icon(
+                  onPressed: () {
+                    final provider =
+                        Provider.of<SignInProvider>(context, listen: false);
+                    provider.appleLogin();
+                  },
+                  icon: const FaIcon(FontAwesomeIcons.google),
+                  label: const Text('Login/Signup with Apple ID')),
+            ],
+          ),
         ));
   }
 }
