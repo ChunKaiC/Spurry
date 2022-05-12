@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 
-const int resultHeight = 168;
+const int topPad = 20;
+const int infoHeight = 50;
+const int resultHeight = 100;
 const int avatarWidth = 100;
 
 enum Buttons {
@@ -161,40 +163,40 @@ class _CalculatorState extends State<Calculator> {
     MediaQueryData queryData = MediaQuery.of(context);
     return Column(children: [
       /// result tab
-      Row(
+      Column(
         children: [
-          Column(
-            children: [
-              Container(
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: CircleAvatar(
-                    radius: avatarWidth.toDouble(),
-                    //backgroundImage: NetworkImage(user!.photoURL!),
-                  ),
+          Container(height: topPad.toDouble(), color: Colors.blue),
+          Container(
+            color: Colors.blue,
+            child: Row(
+              children: [
+                Expanded(
+                    child: Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 10, 0, 0),
+                  child: Text(user!.email!),
+                  // ),
+                  // width: 100,
+                  // height: infoHeight.toDouble(),
+                  // color: Colors.blue,
+                  // alignment: Alignment.bottomRight,
+                )),
+                Container(
+                  height: infoHeight.toDouble(),
+                  width: avatarWidth.toDouble(),
+                  child: ElevatedButton(
+                      onPressed: () {
+                        final provider =
+                            Provider.of<SignInProvider>(context, listen: false);
+                        provider.logout();
+                      },
+                      child: const Text('Logout!')),
                 ),
-                width: avatarWidth.toDouble(),
-                height: resultHeight.toDouble() - 20,
-                color: Colors.blue,
-                alignment: Alignment.bottomRight,
-              ),
-              Container(
-                height: 20,
-                width: avatarWidth.toDouble(),
-                color: Colors.blue,
-                child: ElevatedButton(
-                    onPressed: () {
-                      final provider =
-                          Provider.of<SignInProvider>(context, listen: false);
-                      provider.logout();
-                    },
-                    child: const Text('Logout!')),
-              ),
-            ],
+              ],
+            ),
           ),
           Container(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 88, 42, 20),
+              padding: const EdgeInsets.fromLTRB(0, 22, 42, 20),
               child: Text(
                 _result.toString(),
                 style: const TextStyle(
@@ -205,7 +207,7 @@ class _CalculatorState extends State<Calculator> {
             ),
             color: Colors.blue,
             // color: const Color(0xFFF8F8F8),
-            width: queryData.size.width - avatarWidth,
+            width: queryData.size.width,
             alignment: Alignment.bottomRight,
             height: resultHeight.toDouble(),
           )
@@ -218,7 +220,11 @@ class _CalculatorState extends State<Calculator> {
           child: GridView.builder(
             padding: const EdgeInsets.all(0),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                mainAxisExtent: (queryData.size.height - resultHeight) / 4,
+                mainAxisExtent: (queryData.size.height -
+                        resultHeight -
+                        topPad -
+                        infoHeight) /
+                    4,
                 crossAxisCount: 4),
             itemCount: Buttons.values.length,
             itemBuilder: (_, index) {
