@@ -12,6 +12,7 @@ enum SignInStates {
 enum SignInType {
   apple,
   google,
+  anon,
 }
 
 class SignInProvider extends ChangeNotifier {
@@ -68,6 +69,16 @@ class SignInProvider extends ChangeNotifier {
         idToken: credential.identityToken);
 
     await FirebaseAuth.instance.signInWithCredential(newCred);
+
+    state = SignInStates.signingIn;
+    notifyListeners();
+  }
+
+  anonLogin() async {
+    state = SignInStates.signingIn;
+    type = SignInType.apple;
+
+    await FirebaseAuth.instance.signInAnonymously();
 
     state = SignInStates.signingIn;
     notifyListeners();

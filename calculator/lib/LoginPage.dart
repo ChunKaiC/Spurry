@@ -40,7 +40,11 @@ class LoginPage extends StatelessWidget {
                       label: const Text('Login/Signup with Apple ID'))
                   : Container(),
               ElevatedButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  final provider =
+                      Provider.of<SignInProvider>(context, listen: false);
+                  provider.anonLogin();
+                },
                 icon: const FaIcon(FontAwesomeIcons.question),
                 label: const Text('Proceed without logging in'),
               ),

@@ -203,7 +203,8 @@ class _CalculatorState extends State<Calculator> {
                 Expanded(
                     child: Padding(
                   padding: const EdgeInsets.fromLTRB(20, 10, 0, 0),
-                  child: Text('User: ' + user!.email!),
+                  child: Text('User: ' +
+                      ((user!.email != null ? user!.email! : 'Anonymous'))),
                   // ),
                   // width: 100,
                   // height: infoHeight.toDouble(),
