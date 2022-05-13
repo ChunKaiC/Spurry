@@ -106,6 +106,8 @@ class _CalculatorState extends State<Calculator> {
     }
 
     UserPreferences.setResult(res);
+    UserPreferences.addHistory(
+        "${double.parse(x)} $op ${double.parse(y)} = $res");
 
     return res;
   }
@@ -139,12 +141,17 @@ class _CalculatorState extends State<Calculator> {
             _update(num: _eval(op: _op!, x: _prev!, y: _curr!));
             _op = _prev = _curr = null;
           }
+
+          print(UserPreferences.getHistory());
+
           break;
         }
 
       case Buttons.clear:
         // Reset
         {
+          UserPreferences.setResult(0.0);
+          UserPreferences.pref.remove('historyKey');
           _update(num: 0);
           _op = _prev = _curr = null;
           break;
