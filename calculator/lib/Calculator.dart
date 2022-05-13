@@ -186,7 +186,7 @@ class _CalculatorState extends State<Calculator> {
             color: Colors.blue,
             child: Row(
               children: [
-                Container(
+                SizedBox(
                   height: infoHeight.toDouble(),
                   width: avatarWidth.toDouble() + 20,
                   child: Padding(

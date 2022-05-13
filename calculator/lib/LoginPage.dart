@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import 'dart:io' show Platform;
 
 class LoginPage extends StatelessWidget {
+  const LoginPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
