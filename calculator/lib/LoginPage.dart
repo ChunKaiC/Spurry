@@ -2,6 +2,7 @@ import 'package:calculator/SignInProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'dart:io' show Platform;
 
 class LoginPage extends StatelessWidget {
   @override
@@ -13,13 +14,13 @@ class LoginPage extends StatelessWidget {
         body: Center(
           child: Column(
             children: [
-              SizedBox(height: 50),
-              SizedBox(
+              const SizedBox(height: 50),
+              const SizedBox(
                 width: 200,
                 height: 200,
-                child: const FlutterLogo(),
+                child: FlutterLogo(),
               ),
-              SizedBox(height: 50),
+              const SizedBox(height: 50),
               ElevatedButton.icon(
                   onPressed: () {
                     final provider =
@@ -28,14 +29,21 @@ class LoginPage extends StatelessWidget {
                   },
                   icon: const FaIcon(FontAwesomeIcons.google),
                   label: const Text('Login/Signup with Google')),
+              Platform.isIOS
+                  ? ElevatedButton.icon(
+                      onPressed: () {
+                        final provider =
+                            Provider.of<SignInProvider>(context, listen: false);
+                        provider.appleLogin();
+                      },
+                      icon: const FaIcon(FontAwesomeIcons.apple),
+                      label: const Text('Login/Signup with Apple ID'))
+                  : Container(),
               ElevatedButton.icon(
-                  onPressed: () {
-                    final provider =
-                        Provider.of<SignInProvider>(context, listen: false);
-                    provider.appleLogin();
-                  },
-                  icon: const FaIcon(FontAwesomeIcons.apple),
-                  label: const Text('Login/Signup with Apple ID')),
+                onPressed: () {},
+                icon: const FaIcon(FontAwesomeIcons.question),
+                label: const Text('Proceed without logging in'),
+              ),
             ],
           ),
         ));
