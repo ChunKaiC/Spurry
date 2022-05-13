@@ -1,5 +1,6 @@
 import 'package:calculator/SignInProvider.dart';
 import 'package:calculator/LoginPage.dart';
+import 'package:calculator/UserPreferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -80,7 +81,7 @@ class Calculator extends StatefulWidget {
 
 class _CalculatorState extends State<Calculator> {
   final user = FirebaseAuth.instance.currentUser;
-  double _result = 0;
+  double _result = UserPreferences.getResult() ?? 0;
   String? _op;
   String? _prev;
   String? _curr;
@@ -92,14 +93,21 @@ class _CalculatorState extends State<Calculator> {
   }
 
   double _eval({required String op, required String x, required String y}) {
+    double res;
+
     if (op == 'x') {
-      return (double.parse(x) * double.parse(y));
+      res = (double.parse(x) * double.parse(y));
     } else if (op == '/') {
-      return (double.parse(x) / double.parse(y));
+      res = (double.parse(x) / double.parse(y));
     } else if (op == '-') {
-      return (double.parse(x) - double.parse(y));
+      res = (double.parse(x) - double.parse(y));
+    } else {
+      res = (double.parse(x) + double.parse(y));
     }
-    return (double.parse(x) + double.parse(y));
+
+    UserPreferences.setResult(res);
+
+    return res;
   }
 
   void _onPressFunction({required int index}) {
