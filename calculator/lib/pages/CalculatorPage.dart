@@ -79,7 +79,8 @@ extension GetVal on Buttons {
 }
 
 class CalculatorPage extends StatelessWidget {
-  const CalculatorPage({Key? key, required this.title}) : super(key: key);
+  final user = FirebaseAuth.instance.currentUser;
+  CalculatorPage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -103,19 +104,23 @@ class CalculatorPage extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
                           child: ElevatedButton(
-                              onPressed: () {}, child: const Text('Logout!')),
+                              onPressed: () {
+                                //TODO
+                              },
+                              child: const Text('Logout!')),
                         ),
                       ),
-                      const Expanded(
+                      Expanded(
                           child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 10, 0, 0),
-                        child: Text('User: ' + ''),
-                        // ),
-                        // width: 100,
-                        // height: infoHeight.toDouble(),
-                        // color: Colors.blue,
-                        // alignment: Alignment.bottomRight,
-                      )),
+                              padding: const EdgeInsets.fromLTRB(20, 10, 0, 0),
+                              child: Text(
+                                'User: ${user!.email!}',
+                                // ),
+                                // width: 100,
+                                // height: infoHeight.toDouble(),
+                                // color: Colors.blue,
+                                // alignment: Alignment.bottomRight,
+                              ))),
                     ],
                   ),
                 ),

@@ -6,6 +6,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 import 'SignInProvider.dart';
+import 'UserPreferences.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 const int topPad = 20;
 const int infoHeight = 50;
@@ -31,7 +33,11 @@ enum Buttons {
   add,
 }
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  await UserPreferences.init();
+
   runApp(const MyApp());
 }
 

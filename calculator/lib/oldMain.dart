@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
                   child: CircularProgressIndicator(),
                 );
               } else if (snapshot.hasData) {
-                return const CalculatorPage(title: 'ProtoCalculator');
+                return CalculatorPage(title: 'ProtoCalculator');
               } else if (snapshot.hasError) {
                 return const Center(
                   child: Text('Something went wrong :('),

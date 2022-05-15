@@ -1,14 +1,13 @@
 import 'package:calculator/bloc/calculator_bloc.dart';
 import 'package:calculator/models/CalculatorModel.dart';
 import 'package:calculator/pages/LoginPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 
 import 'SignInProvider.dart';
 import 'pages/CalculatorPage.dart';
-
-const int resultHeight = 168;
 
 class WidgetTree extends StatelessWidget {
   const WidgetTree({Key? key, required this.title}) : super(key: key);
@@ -21,9 +20,34 @@ class WidgetTree extends StatelessWidget {
     return BlocBuilder<CalculatorBloc, CalculatorState>(
         builder: (context, state) {
       if (state is CalculatorInitial) {
-        return const CircularProgressIndicator(color: Colors.blue);
+        return const Center(
+            child: CircularProgressIndicator(color: Colors.blue));
       } else if (state is CalculatorLogin) {
-        return const LoginPage();
+        return StreamBuilder(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              // Waiting for authentication
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasData) {
+              // Logged in!
+              context.read<CalculatorBloc>().add(Login());
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasError) {
+              // Something bad happened
+              return const Center(
+                child: Text('Something went wrong :('),
+              );
+            } else {
+              // Default page
+              return const LoginPage();
+            }
+          },
+        );
       } else if (state is CalculatorLoaded) {
         return CalculatorPage(title: title);
       } else {

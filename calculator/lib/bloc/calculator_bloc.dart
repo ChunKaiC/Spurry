@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/CalculatorModel.dart';
 import 'package:equatable/equatable.dart';
 
@@ -106,11 +107,6 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
 
   // Initializes the calculator
   CalculatorBloc() : super(CalculatorInitial()) {
-    on<Initialize>((event, emit) async {
-      await Future<void>.delayed(const Duration(seconds: 2));
-      emit(CalculatorLogin());
-    });
-
     on<OnPress>((event, emit) {
       if (state is CalculatorLoaded) {
         final state = this.state as CalculatorLoaded;
@@ -175,8 +171,21 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
             }
         }
 
-        emit(CalculatorLoaded(calculator: (newCalc ?? state.calculator)));
+        emit(CalculatorLoaded(
+            calculator: (newCalc ?? state.calculator), user: state.user));
       }
     });
+
+    on<Initialize>((event, emit) async {
+      await Future<void>.delayed(const Duration(seconds: 2));
+      emit(CalculatorLogin());
+    });
+
+    on<Login>(((event, emit) async {
+      await Future<void>.delayed(const Duration(seconds: 2));
+      emit(CalculatorLoaded(
+          calculator: const CalculatorModel(),
+          user: FirebaseAuth.instance.currentUser));
+    }));
   }
 }
