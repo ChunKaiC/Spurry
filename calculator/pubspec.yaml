@@ -42,6 +42,8 @@ dependencies:
   sign_in_with_apple: ^3.3.0
   shared_preferences: ^2.0.15
   cloud_firestore: ^3.1.15
+  bloc: ^8.0.3
+  equatable: ^2.0.3
 
 dev_dependencies:
   flutter_test:
