@@ -3,7 +3,9 @@ import 'package:calculator/models/CalculatorModel.dart';
 import 'package:calculator/pages/LoginPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 
+import 'SignInProvider.dart';
 import 'pages/CalculatorPage.dart';
 
 const int resultHeight = 168;

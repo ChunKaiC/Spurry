@@ -3,6 +3,9 @@ import 'package:calculator/bloc/calculator_bloc.dart';
 import 'package:calculator/models/CalculatorModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
+
+import 'SignInProvider.dart';
 
 const int topPad = 20;
 const int infoHeight = 50;
@@ -39,16 +42,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (context) => CalculatorBloc()..add(Initialize()))
-      ],
-      child: MaterialApp(
-        title: 'ProtoCalculator',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: const WidgetTree(title: 'ProtoCalculator'),
-      ),
-    );
+        providers: [
+          BlocProvider(create: (context) => CalculatorBloc()..add(Initialize()))
+        ],
+        child: ChangeNotifierProvider(
+          create: (context) => SignInProvider(),
+          child: MaterialApp(
+            title: 'ProtoCalculator',
+            theme: ThemeData(
+              primarySwatch: Colors.blue,
+            ),
+            home: const WidgetTree(title: 'ProtoCalculator'),
+          ),
+        ));
   }
 }
