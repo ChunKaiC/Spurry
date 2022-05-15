@@ -15,8 +15,12 @@ class ManageData {
     db.collection(userEmail).doc('result').set(userCalculation);
   }
 
-  static Future<double> getRecent(userEmail) async {
+  static Future<double?> getRecent(userEmail) async {
     final recentCalc = await db.collection(userEmail).doc('result').get();
+
+    if (recentCalc.data() == null) {
+      return null;
+    }
     return recentCalc.data()!['result'];
   }
 }

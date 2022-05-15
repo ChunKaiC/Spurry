@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:calculator/ManageData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/CalculatorModel.dart';
 import 'package:equatable/equatable.dart';
@@ -65,6 +66,7 @@ extension GetVal on Buttons {
 }
 
 class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
+  User? user;
   String? _op;
   String? _prev;
   String? _curr;
@@ -100,7 +102,7 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       "result": res,
     };
 
-    //ManageData.update(userCalculation, user!.email!, date);
+    ManageData.update(userCalculation, user!.email!, date);
 
     return res;
   }
@@ -182,8 +184,10 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
     });
 
     on<Login>(((event, emit) async {
+      user = FirebaseAuth.instance.currentUser;
+      double? result = await ManageData.getRecent(user!.email!);
       emit(CalculatorLoaded(
-          calculator: const CalculatorModel(),
+          calculator: CalculatorModel(result: (result ?? 0)),
           user: FirebaseAuth.instance.currentUser));
     }));
 
