@@ -1,3 +1,4 @@
+import 'package:calculator/ManageData.dart';
 import 'package:calculator/WidgetTree.dart';
 import 'package:calculator/bloc/calculator_bloc.dart';
 import 'package:calculator/models/CalculatorModel.dart';
@@ -37,6 +38,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await UserPreferences.init();
+  ManageData.init;
 
   runApp(const MyApp());
 }
