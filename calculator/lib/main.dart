@@ -1,18 +1,34 @@
-import 'package:calculator/SignInProvider.dart';
-import 'package:calculator/LoginPage.dart';
-import 'package:calculator/UserPreferences.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:calculator/WidgetTree.dart';
+import 'package:calculator/bloc/calculator_bloc.dart';
+import 'package:calculator/models/CalculatorModel.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'Calculator.dart';
+const int topPad = 20;
+const int infoHeight = 50;
+const int resultHeight = 100;
+const int avatarWidth = 100;
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  await UserPreferences.init();
+enum Buttons {
+  seven,
+  eight,
+  nine,
+  mult,
+  four,
+  five,
+  six,
+  div,
+  one,
+  two,
+  three,
+  sub,
+  clear,
+  zero,
+  eq,
+  add,
+}
 
+void main() {
   runApp(const MyApp());
 }
 
@@ -22,35 +38,17 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => SignInProvider(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+            create: (context) => CalculatorBloc()..add(LoadCalculator()))
+      ],
       child: MaterialApp(
         title: 'ProtoCalculator',
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: Scaffold(
-          backgroundColor: Colors.white,
-          body: StreamBuilder(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (snapshot.hasData) {
-                return const Calculator(title: 'ProtoCalculator');
-              } else if (snapshot.hasError) {
-                return const Center(
-                  child: Text('Something went wrong :('),
-                );
-              } else {
-                return LoginPage();
-              }
-            },
-          ),
-        ),
-        // home: const Calculator(title: 'ProtoCalculator'),
+        home: const WidgetTree(title: 'ProtoCalculator'),
       ),
     );
   }
