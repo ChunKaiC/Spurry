@@ -182,10 +182,14 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
     });
 
     on<Login>(((event, emit) async {
-      await Future<void>.delayed(const Duration(seconds: 2));
       emit(CalculatorLoaded(
           calculator: const CalculatorModel(),
           user: FirebaseAuth.instance.currentUser));
+    }));
+
+    on<Logout>(((event, emit) async {
+      FirebaseAuth.instance.signOut();
+      emit(CalculatorLogin());
     }));
   }
 }

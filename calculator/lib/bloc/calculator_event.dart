@@ -11,6 +11,8 @@ class Initialize extends CalculatorEvent {}
 
 class Login extends CalculatorEvent {}
 
+class Logout extends CalculatorEvent {}
+
 class OnPress extends CalculatorEvent {
   final int buttonIndex;
 
