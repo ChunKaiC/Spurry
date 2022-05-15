@@ -7,7 +7,7 @@ abstract class CalculatorEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class LoadCalculator extends CalculatorEvent {}
+class Initialize extends CalculatorEvent {}
 
 class OnPress extends CalculatorEvent {
   final int buttonIndex;

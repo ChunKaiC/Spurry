@@ -106,9 +106,9 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
 
   // Initializes the calculator
   CalculatorBloc() : super(CalculatorInitial()) {
-    on<LoadCalculator>((event, emit) async {
-      await Future<void>.delayed(const Duration(seconds: 1));
-      emit(const CalculatorLoaded(calculator: CalculatorModel()));
+    on<Initialize>((event, emit) async {
+      await Future<void>.delayed(const Duration(seconds: 2));
+      emit(CalculatorLogin());
     });
 
     on<OnPress>((event, emit) {

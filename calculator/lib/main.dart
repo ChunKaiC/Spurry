@@ -40,8 +40,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(
-            create: (context) => CalculatorBloc()..add(LoadCalculator()))
+        BlocProvider(create: (context) => CalculatorBloc()..add(Initialize()))
       ],
       child: MaterialApp(
         title: 'ProtoCalculator',

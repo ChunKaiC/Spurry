@@ -9,6 +9,8 @@ abstract class CalculatorState extends Equatable {
 
 class CalculatorInitial extends CalculatorState {}
 
+class CalculatorLogin extends CalculatorState {}
+
 class CalculatorLoaded extends CalculatorState {
   final CalculatorModel calculator;
 

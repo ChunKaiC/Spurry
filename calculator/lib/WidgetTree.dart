@@ -1,5 +1,6 @@
 import 'package:calculator/bloc/calculator_bloc.dart';
 import 'package:calculator/models/CalculatorModel.dart';
+import 'package:calculator/pages/LoginPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,17 +16,17 @@ class WidgetTree extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     MediaQueryData queryData = MediaQuery.of(context);
-    // return BlocBuilder<CalculatorBloc, CalculatorState>(
-    //     builder: (context, state) {
-    //   if (state is CalculatorInitial) {
-    //     return const CircularProgressIndicator(color: Colors.red);
-    //   } else if (state is CalculatorLoaded) {
-    //     return const CircularProgressIndicator(color: Colors.blue);
-    //   } else {
-    //     return const Text("Something bad happened :(");
-    //   }
-    // });
-
-    return CalculatorPage(title: title);
+    return BlocBuilder<CalculatorBloc, CalculatorState>(
+        builder: (context, state) {
+      if (state is CalculatorInitial) {
+        return const CircularProgressIndicator(color: Colors.blue);
+      } else if (state is CalculatorLogin) {
+        return const LoginPage();
+      } else if (state is CalculatorLoaded) {
+        return CalculatorPage(title: title);
+      } else {
+        return const Text("Something bad happened :(");
+      }
+    });
   }
 }
