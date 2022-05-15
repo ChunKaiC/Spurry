@@ -1,6 +1,8 @@
+import 'package:calculator/ManageData.dart';
 import 'package:calculator/SignInProvider.dart';
 import 'package:calculator/LoginPage.dart';
 import 'package:calculator/UserPreferences.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -81,10 +83,16 @@ class Calculator extends StatefulWidget {
 
 class _CalculatorState extends State<Calculator> {
   final user = FirebaseAuth.instance.currentUser;
-  double _result = UserPreferences.getResult() ?? 0;
+  double _result = 0;
+  // double _result = UserPreferences.getResult() ?? 0;
   String? _op;
   String? _prev;
   String? _curr;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   void _update({required double num}) {
     setState(() {
@@ -105,9 +113,21 @@ class _CalculatorState extends State<Calculator> {
       res = (double.parse(x) + double.parse(y));
     }
 
-    UserPreferences.setResult(res);
-    UserPreferences.addHistory(
-        "${double.parse(x)} $op ${double.parse(y)} = $res");
+    // UserPreferences.setResult(res);
+    // UserPreferences.addHistory(
+    //     "${double.parse(x)} $op ${double.parse(y)} = $res");
+
+    final DateTime date = DateTime.now();
+
+    // To save history
+    final userCalculation = <String, dynamic>{
+      "x": double.parse(x),
+      'operation': op,
+      'y': double.parse(y),
+      "result": res,
+    };
+
+    ManageData.update(userCalculation, user!.email!, date);
 
     return res;
   }
@@ -142,7 +162,7 @@ class _CalculatorState extends State<Calculator> {
             _op = _prev = _curr = null;
           }
 
-          print(UserPreferences.getHistory());
+          // print(UserPreferences.getHistory());
 
           break;
         }
@@ -150,10 +170,11 @@ class _CalculatorState extends State<Calculator> {
       case Buttons.clear:
         // Reset
         {
-          UserPreferences.setResult(0.0);
-          UserPreferences.pref.remove('historyKey');
+          // UserPreferences.setResult(0.0);
+          // UserPreferences.pref.remove('historyKey');
           _update(num: 0);
           _op = _prev = _curr = null;
+          final temp = ManageData.getRecent(user!.email!);
           break;
         }
 
