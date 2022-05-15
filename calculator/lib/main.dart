@@ -38,7 +38,7 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await UserPreferences.init();
-  ManageData.init;
+  ManageData.init();
 
   runApp(const MyApp());
 }
