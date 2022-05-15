@@ -3,7 +3,7 @@ import 'package:calculator/models/CalculatorModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'Calculator.dart';
+import 'pages/CalculatorPage.dart';
 
 const int resultHeight = 168;
 
@@ -26,6 +26,6 @@ class WidgetTree extends StatelessWidget {
     //   }
     // });
 
-    return Calculator(title: title);
+    return CalculatorPage(title: title);
   }
 }

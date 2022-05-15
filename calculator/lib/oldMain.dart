@@ -1,12 +1,12 @@
 import 'package:calculator/SignInProvider.dart';
-import 'package:calculator/LoginPage.dart';
+import 'package:calculator/pages/LoginPage.dart';
 import 'package:calculator/UserPreferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:provider/provider.dart';
 
-import 'Calculator.dart';
+import 'pages/CalculatorPage.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
                   child: CircularProgressIndicator(),
                 );
               } else if (snapshot.hasData) {
-                return const Calculator(title: 'ProtoCalculator');
+                return const CalculatorPage(title: 'ProtoCalculator');
               } else if (snapshot.hasError) {
                 return const Center(
                   child: Text('Something went wrong :('),

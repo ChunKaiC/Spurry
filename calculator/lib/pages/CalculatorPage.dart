@@ -1,6 +1,6 @@
 import 'package:calculator/ManageData.dart';
 import 'package:calculator/SignInProvider.dart';
-import 'package:calculator/LoginPage.dart';
+import 'package:calculator/pages/LoginPage.dart';
 import 'package:calculator/UserPreferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -78,8 +78,8 @@ extension GetVal on Buttons {
   }
 }
 
-class Calculator extends StatelessWidget {
-  const Calculator({Key? key, required this.title}) : super(key: key);
+class CalculatorPage extends StatelessWidget {
+  const CalculatorPage({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
