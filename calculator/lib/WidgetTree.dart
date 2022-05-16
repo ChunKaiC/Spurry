@@ -1,5 +1,6 @@
 import 'package:calculator/bloc/calculator_bloc.dart';
 import 'package:calculator/pages/LoginPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'pages/CalculatorPage.dart';
@@ -15,10 +16,29 @@ class WidgetTree extends StatelessWidget {
     return BlocBuilder<CalculatorBloc, CalculatorState>(
         builder: (context, state) {
       if (state is CalculatorInitial) {
-        return const Center(
-            child: CircularProgressIndicator(color: Colors.blue));
+        return Container(
+          color: Colors.white,
+          child: const Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
       } else if (state is CalculatorLogin) {
         return const LoginPage();
+      } else if (state is CalculatorLoading) {
+        return StreamBuilder(
+          stream: FirebaseAuth.instance.authStateChanges(),
+          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+            if (snapshot.hasData || state.method == LoginMethod.anon) {
+              context.read<CalculatorBloc>().add(Load());
+            }
+            return Container(
+              color: Colors.white,
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          },
+        );
       } else if (state is CalculatorLoaded) {
         return CalculatorPage(title: title);
       } else {

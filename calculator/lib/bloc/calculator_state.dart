@@ -11,6 +11,15 @@ class CalculatorInitial extends CalculatorState {}
 
 class CalculatorLogin extends CalculatorState {}
 
+class CalculatorLoading extends CalculatorState {
+  final LoginMethod method;
+
+  const CalculatorLoading({required this.method});
+
+  @override
+  List<Object> get props => [method];
+}
+
 class CalculatorLoaded extends CalculatorState {
   final CalculatorModel calculator;
 

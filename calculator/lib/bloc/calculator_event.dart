@@ -28,3 +28,5 @@ class OnPress extends CalculatorEvent {
   @override
   List<Object> get props => [buttonIndex];
 }
+
+class Load extends CalculatorEvent {}

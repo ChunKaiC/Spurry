@@ -236,9 +236,25 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
         await _appleLogin();
       } else if (method == LoginMethod.anon) {
         print('No authentication required.');
-      } else if (method == LoginMethod.loggedInPreviously) {
-        print('Already authenticated.');
       }
+
+      emit(CalculatorLoading(method: event.method));
+    }));
+
+    on<Logout>(((event, emit) async {
+      // if (type == SignInType.google) {
+      //   final googleSignIn = GoogleSignIn();
+      //   await googleSignIn.disconnect();
+      // } else if (type == SignInType.apple) {
+      //   print('Signing out from apple device!');
+      // }
+      FirebaseAuth.instance.signOut();
+      emit(CalculatorLogin());
+    }));
+
+    on<Load>(((event, emit) async {
+      // Clear previous inputs
+      _curr = _op = _prev = null;
 
       double? result;
       if (method == LoginMethod.anon) {
@@ -253,17 +269,6 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
           calculator: CalculatorModel(result: (result ?? 0)),
         ));
       }
-    }));
-
-    on<Logout>(((event, emit) async {
-      // if (type == SignInType.google) {
-      //   final googleSignIn = GoogleSignIn();
-      //   await googleSignIn.disconnect();
-      // } else if (type == SignInType.apple) {
-      //   print('Signing out from apple device!');
-      // }
-      FirebaseAuth.instance.signOut();
-      emit(CalculatorLogin());
     }));
   }
 }
