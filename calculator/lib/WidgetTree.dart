@@ -28,15 +28,31 @@ class WidgetTree extends StatelessWidget {
         return StreamBuilder(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            if (snapshot.hasData || state.method == LoginMethod.anon) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Container(
+                color: Colors.white,
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            } else if (snapshot.hasData || state.method == LoginMethod.anon) {
               context.read<CalculatorBloc>().add(Load());
+              return Container(
+                color: Colors.white,
+                child: const Center(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            } else if (snapshot.hasError) {
+              return Container(
+                color: Colors.white,
+                child: const Center(
+                  child: Text('Something went wrong :('),
+                ),
+              );
+            } else {
+              return const LoginPage();
             }
-            return Container(
-              color: Colors.white,
-              child: const Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
           },
         );
       } else if (state is CalculatorLoaded) {
