@@ -1,9 +1,9 @@
-import 'package:calculator/ManageData.dart';
+import 'package:calculator/data_management/ManageData.dart';
 import 'package:calculator/WidgetTree.dart';
 import 'package:calculator/bloc/calculator_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'UserPreferences.dart';
+import 'data_management/UserPreferences.dart';
 import 'package:firebase_core/firebase_core.dart';
 
 const int topPad = 20;
