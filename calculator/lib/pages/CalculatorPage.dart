@@ -67,7 +67,7 @@ extension GetVal on Buttons {
 }
 
 class CalculatorPage extends StatelessWidget {
-  final user = FirebaseAuth.instance.currentUser;
+  final User? user = FirebaseAuth.instance.currentUser;
   CalculatorPage({Key? key, required this.title}) : super(key: key);
 
   final String title;
@@ -101,7 +101,7 @@ class CalculatorPage extends StatelessWidget {
                           child: Padding(
                               padding: const EdgeInsets.fromLTRB(20, 10, 0, 0),
                               child: Text(
-                                'User: ${user!.email!}',
+                                'User: ${user == null ? 'Anonymous' : user!.email!}',
                                 // ),
                                 // width: 100,
                                 // height: infoHeight.toDouble(),

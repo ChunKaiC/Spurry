@@ -19,31 +19,7 @@ class WidgetTree extends StatelessWidget {
         return const Center(
             child: CircularProgressIndicator(color: Colors.blue));
       } else if (state is CalculatorLogin) {
-        return StreamBuilder(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              // Waiting for authentication
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (snapshot.hasData) {
-              // Logged in!
-              context.read<CalculatorBloc>().add(Login());
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            } else if (snapshot.hasError) {
-              // Something bad happened
-              return const Center(
-                child: Text('Something went wrong :('),
-              );
-            } else {
-              // Default page
-              return const LoginPage();
-            }
-          },
-        );
+        return const LoginPage();
       } else if (state is CalculatorLoaded) {
         return CalculatorPage(title: title);
       } else {

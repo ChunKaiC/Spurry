@@ -1,6 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:calculator/ManageData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import '../UserPreferences.dart';
 import '../models/CalculatorModel.dart';
 import 'package:equatable/equatable.dart';
 part 'calculator_event.dart';
@@ -64,11 +67,19 @@ extension GetVal on Buttons {
   }
 }
 
+enum LoginMethod {
+  google,
+  apple,
+  anon,
+  loggedInPreviously,
+}
+
 class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
   User? user;
   String? _op;
   String? _prev;
   String? _curr;
+  LoginMethod? method;
 
   CalculatorModel _update({required double num}) {
     return CalculatorModel(result: num);
@@ -87,23 +98,58 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       res = (double.parse(x) + double.parse(y));
     }
 
-    // UserPreferences.setResult(res);
-    // UserPreferences.addHistory(
-    //     "${double.parse(x)} $op ${double.parse(y)} = $res");
+    if (method == LoginMethod.anon) {
+      UserPreferences.setResult(res);
+      UserPreferences.addHistory(
+          "${double.parse(x)} $op ${double.parse(y)} = $res");
+    } else {
+      final DateTime date = DateTime.now();
 
-    final DateTime date = DateTime.now();
+      // To save history
+      final userCalculation = <String, dynamic>{
+        "x": double.parse(x),
+        'operation': op,
+        'y': double.parse(y),
+        "result": res,
+      };
 
-    // To save history
-    final userCalculation = <String, dynamic>{
-      "x": double.parse(x),
-      'operation': op,
-      'y': double.parse(y),
-      "result": res,
-    };
-
-    ManageData.update(userCalculation, user!.email!, date);
+      ManageData.update(userCalculation, user!.email!, date);
+    }
 
     return res;
+  }
+
+  Future _googleLogin() async {
+    final googleSignIn = GoogleSignIn();
+
+    final googleUser = await googleSignIn.signIn();
+
+    if (googleUser == null) return;
+
+    final googleAuth = await googleUser.authentication;
+
+    final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
+
+    await FirebaseAuth.instance.signInWithCredential(credential);
+  }
+
+  Future _appleLogin() async {
+    // authenticate login
+    final credential = await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+    );
+
+    final oAuthProvider = OAuthProvider('apple.com');
+
+    final newCred = oAuthProvider.credential(
+        accessToken: credential.authorizationCode,
+        idToken: credential.identityToken);
+
+    await FirebaseAuth.instance.signInWithCredential(newCred);
   }
 
   // Initializes the calculator
@@ -172,8 +218,7 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
             }
         }
 
-        emit(CalculatorLoaded(
-            calculator: (newCalc ?? state.calculator), user: state.user));
+        emit(CalculatorLoaded(calculator: (newCalc ?? state.calculator)));
       }
     });
 
@@ -183,14 +228,40 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
     });
 
     on<Login>(((event, emit) async {
-      user = FirebaseAuth.instance.currentUser;
-      double? result = await ManageData.getRecent(user!.email!);
-      emit(CalculatorLoaded(
+      // Login based on method chosen
+      method = event.method;
+      if (method == LoginMethod.google) {
+        await _googleLogin();
+      } else if (method == LoginMethod.apple) {
+        await _appleLogin();
+      } else if (method == LoginMethod.anon) {
+        print('No authentication required.');
+      } else if (method == LoginMethod.loggedInPreviously) {
+        print('Already authenticated.');
+      }
+
+      double? result;
+      if (method == LoginMethod.anon) {
+        emit(CalculatorLoaded(
+          calculator:
+              CalculatorModel(result: (UserPreferences.getResult() ?? 0)),
+        ));
+      } else {
+        user = FirebaseAuth.instance.currentUser;
+        result = await ManageData.getRecent(user!.email!);
+        emit(CalculatorLoaded(
           calculator: CalculatorModel(result: (result ?? 0)),
-          user: FirebaseAuth.instance.currentUser));
+        ));
+      }
     }));
 
     on<Logout>(((event, emit) async {
+      // if (type == SignInType.google) {
+      //   final googleSignIn = GoogleSignIn();
+      //   await googleSignIn.disconnect();
+      // } else if (type == SignInType.apple) {
+      //   print('Signing out from apple device!');
+      // }
       FirebaseAuth.instance.signOut();
       emit(CalculatorLogin());
     }));

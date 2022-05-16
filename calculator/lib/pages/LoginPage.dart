@@ -4,6 +4,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'dart:io' show Platform;
 
+import '../bloc/calculator_bloc.dart';
+
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
 
@@ -25,27 +27,27 @@ class LoginPage extends StatelessWidget {
               const SizedBox(height: 50),
               ElevatedButton.icon(
                   onPressed: () {
-                    final provider =
-                        Provider.of<SignInProvider>(context, listen: false);
-                    provider.googleLogin();
+                    context
+                        .read<CalculatorBloc>()
+                        .add(const Login(LoginMethod.google));
                   },
                   icon: const FaIcon(FontAwesomeIcons.google),
                   label: const Text('Login/Signup with Google')),
               Platform.isIOS
                   ? ElevatedButton.icon(
                       onPressed: () {
-                        final provider =
-                            Provider.of<SignInProvider>(context, listen: false);
-                        provider.appleLogin();
+                        context
+                            .read<CalculatorBloc>()
+                            .add(const Login(LoginMethod.apple));
                       },
                       icon: const FaIcon(FontAwesomeIcons.apple),
                       label: const Text('Login/Signup with Apple ID'))
                   : Container(),
               ElevatedButton.icon(
                 onPressed: () {
-                  final provider =
-                      Provider.of<SignInProvider>(context, listen: false);
-                  provider.anonLogin();
+                  context
+                      .read<CalculatorBloc>()
+                      .add(const Login(LoginMethod.anon));
                 },
                 icon: const FaIcon(FontAwesomeIcons.question),
                 label: const Text('Proceed without logging in'),

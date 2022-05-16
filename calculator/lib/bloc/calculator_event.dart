@@ -9,7 +9,14 @@ abstract class CalculatorEvent extends Equatable {
 
 class Initialize extends CalculatorEvent {}
 
-class Login extends CalculatorEvent {}
+class Login extends CalculatorEvent {
+  final LoginMethod method;
+
+  const Login(this.method);
+
+  @override
+  List<Object> get props => [method];
+}
 
 class Logout extends CalculatorEvent {}
 
