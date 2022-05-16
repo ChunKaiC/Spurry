@@ -5,6 +5,9 @@ class ManageData {
 
   static void init() {
     db = FirebaseFirestore.instance;
+    db.settings = const Settings(
+        persistenceEnabled: true,
+        cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
   }
 
   static void update(userCalculation, userEmail, date) {
