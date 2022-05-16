@@ -3,7 +3,6 @@ import 'package:calculator/ManageData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../models/CalculatorModel.dart';
 import 'package:equatable/equatable.dart';
-
 part 'calculator_event.dart';
 part 'calculator_state.dart';
 

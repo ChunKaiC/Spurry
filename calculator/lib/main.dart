@@ -1,11 +1,9 @@
 import 'package:calculator/ManageData.dart';
 import 'package:calculator/WidgetTree.dart';
 import 'package:calculator/bloc/calculator_bloc.dart';
-import 'package:calculator/models/CalculatorModel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-
 import 'SignInProvider.dart';
 import 'UserPreferences.dart';
 import 'package:firebase_core/firebase_core.dart';
