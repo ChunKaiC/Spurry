@@ -30,3 +30,12 @@ class OnPress extends CalculatorEvent {
 }
 
 class Load extends CalculatorEvent {}
+
+class UpdateLightMode extends CalculatorEvent {
+  final String lightMode;
+
+  const UpdateLightMode({required this.lightMode});
+
+  @override
+  List<Object> get props => [lightMode];
+}

@@ -218,7 +218,9 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
             }
         }
 
-        emit(CalculatorLoaded(calculator: (newCalc ?? state.calculator)));
+        emit(CalculatorLoaded(
+            calculator: (newCalc ?? state.calculator),
+            lightMode: state.lightMode));
       }
     });
 
@@ -257,6 +259,7 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       _curr = _op = _prev = null;
 
       double? result;
+      String? lightMode;
       if (method == LoginMethod.anon) {
         emit(CalculatorLoaded(
           calculator:
@@ -265,10 +268,25 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       } else {
         user = FirebaseAuth.instance.currentUser;
         result = await ManageData.getRecent(user!.email!);
+        lightMode = await ManageData.getLightMode(user!.email!);
         emit(CalculatorLoaded(
-          calculator: CalculatorModel(result: (result ?? 0)),
-        ));
+            calculator: CalculatorModel(result: (result ?? 0)),
+            lightMode: lightMode ?? 'Light Mode'));
       }
+    }));
+
+    on<UpdateLightMode>(((event, emit) {
+      CalculatorLoaded oldState = this.state as CalculatorLoaded;
+
+      if (user != null) {
+        final userLightMode = <String, dynamic>{
+          "lightMode": event.lightMode,
+        };
+
+        ManageData.updateLightMode(userLightMode, user!.email!);
+      }
+      emit(CalculatorLoaded(
+          calculator: oldState.calculator, lightMode: event.lightMode));
     }));
   }
 }

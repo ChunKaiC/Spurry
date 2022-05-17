@@ -22,9 +22,11 @@ class CalculatorLoading extends CalculatorState {
 
 class CalculatorLoaded extends CalculatorState {
   final CalculatorModel calculator;
+  final String lightMode;
 
-  const CalculatorLoaded({required this.calculator});
+  const CalculatorLoaded(
+      {required this.calculator, this.lightMode = 'Light Mode'});
 
   @override
-  List<Object> get props => [calculator];
+  List<Object> get props => [calculator, lightMode];
 }

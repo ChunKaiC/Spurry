@@ -24,4 +24,17 @@ class ManageData {
     }
     return recentCalc.data()!['result'];
   }
+
+  static void updateLightMode(userLightMode, userEmail) {
+    db.collection(userEmail).doc('lightMode').set(userLightMode);
+  }
+
+  static Future<String?> getLightMode(userEmail) async {
+    final recentCalc = await db.collection(userEmail).doc('lightMode').get();
+
+    if (recentCalc.data() == null) {
+      return null;
+    }
+    return recentCalc.data()!['lightMode'];
+  }
 }
