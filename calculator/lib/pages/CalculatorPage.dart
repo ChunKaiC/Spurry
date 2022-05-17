@@ -3,10 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:calculator/bloc/calculator_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-const int topPad = 20;
-const int infoHeight = 50;
-const int resultHeight = 100;
-const int avatarWidth = 100;
+const double topPad = 25;
+const double infoHeight = 50;
+const double resultHeight = 100;
+const double avatarWidth = 100;
+const double emailHeight = 25;
 
 enum Buttons {
   seven,
@@ -97,23 +98,38 @@ class CalculatorPage extends StatelessWidget {
                               child: const Text('Logout!')),
                         ),
                       ),
-                      Expanded(
-                          child: Padding(
-                              padding: const EdgeInsets.fromLTRB(20, 10, 0, 0),
-                              child: Text(
-                                'User: ${user == null ? 'Anonymous' : user!.email!}',
-                                // ),
-                                // width: 100,
-                                // height: infoHeight.toDouble(),
-                                // color: Colors.blue,
-                                // alignment: Alignment.bottomRight,
-                              ))),
+                      const Expanded(child: Text('')),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
+                        child: SizedBox(
+                          height: infoHeight.toDouble(),
+                          width: avatarWidth.toDouble() + 20,
+                          child: const Padding(
+                              padding: EdgeInsets.fromLTRB(10, 10, 0, 0),
+                              child: MyDropDown()),
+                        ),
+                      ),
                     ],
                   ),
                 ),
                 Container(
+                    alignment: Alignment.bottomRight,
+                    color: Colors.blue,
+                    height: emailHeight,
+                    width: queryData.size.width,
+                    child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 0, 30, 0),
+                        child: Text(
+                          'User: ${user == null ? 'Anonymous' : user!.email!}',
+                          // ),
+                          // width: 100,
+                          // height: infoHeight.toDouble(),
+                          // color: Colors.blue,
+                          // alignment: Alignment.bottomRight,
+                        ))),
+                Container(
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 22, 42, 20),
+                    padding: const EdgeInsets.fromLTRB(0, 0, 30, 15),
                     child: BlocBuilder<CalculatorBloc, CalculatorState>(
                         builder: (context, state) {
                       if (state is CalculatorInitial) {
@@ -136,7 +152,7 @@ class CalculatorPage extends StatelessWidget {
                   // color: const Color(0xFFF8F8F8),
                   width: queryData.size.width,
                   alignment: Alignment.bottomRight,
-                  height: resultHeight.toDouble(),
+                  height: resultHeight - emailHeight,
                 )
               ],
             ),
@@ -150,7 +166,8 @@ class CalculatorPage extends StatelessWidget {
                       mainAxisExtent: (queryData.size.height -
                               resultHeight -
                               topPad -
-                              infoHeight) /
+                              infoHeight -
+                              emailHeight) /
                           4,
                       crossAxisCount: 4),
                   itemCount: Buttons.values.length,
@@ -170,5 +187,43 @@ class CalculatorPage extends StatelessWidget {
                 )),
           ],
         ));
+  }
+}
+
+class MyDropDown extends StatefulWidget {
+  const MyDropDown({Key? key}) : super(key: key);
+
+  @override
+  State<MyDropDown> createState() => _MyStatefulWidgetState();
+}
+
+class _MyStatefulWidgetState extends State<MyDropDown> {
+  String dropdownValue = 'Light Mode';
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButton<String>(
+      value: dropdownValue,
+      icon: const Icon(Icons.arrow_downward),
+      elevation: 16,
+      style: const TextStyle(color: Colors.black),
+      underline: Container(
+        height: 2,
+        color: Colors.black,
+      ),
+      onChanged: (String? newValue) {
+        setState(() {
+          dropdownValue = newValue!;
+          // context.read<CalculatorBloc>().add(UpdateLightMode(mode: newValue));
+        });
+      },
+      items: <String>['Light Mode', 'Dark Mode']
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+    );
   }
 }
