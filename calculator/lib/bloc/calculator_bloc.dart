@@ -7,6 +7,7 @@ import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../data_management/UserPreferences.dart';
 import '../models/CalculatorModel.dart';
 import 'package:equatable/equatable.dart';
+import 'package:uuid/uuid.dart';
 part 'calculator_event.dart';
 part 'calculator_state.dart';
 
@@ -153,6 +154,18 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
     await FirebaseAuth.instance.signInWithCredential(newCred);
   }
 
+  Future _unsignedLogin() async {
+    String? user = UserPreferences.getUser();
+
+    if (user == null) {
+      var uuid = Uuid();
+
+      // Generate a v4 (random) id
+      UserPreferences.setUser(
+          uuid.v4()); // -> '110ec58a-a0f2-4ac4-8393-c866d813b8d1'
+    }
+  }
+
   // Initializes the calculator
   CalculatorBloc() : super(CalculatorInitial()) {
     on<OnPress>((event, emit) {
@@ -238,6 +251,7 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       } else if (method == LoginMethod.apple) {
         await _appleLogin();
       } else if (method == LoginMethod.anon) {
+        await _unsignedLogin();
         print('No authentication required.');
       }
 
@@ -262,9 +276,11 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       double? result;
       String? lightMode;
       if (method == LoginMethod.anon) {
+        lightMode = UserPreferences.getLightMode();
         emit(CalculatorLoaded(
           calculator:
               CalculatorModel(result: (UserPreferences.getResult() ?? 0)),
+          lightMode: lightMode ?? 'Light Mode',
         ));
       } else {
         user = FirebaseAuth.instance.currentUser;
