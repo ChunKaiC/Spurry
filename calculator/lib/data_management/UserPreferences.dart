@@ -4,6 +4,7 @@ class UserPreferences {
   static late SharedPreferences pref;
   static const _resultKey = 'resultkey';
   static const _historyKey = "historyKey";
+  static const _lightModeKey = "lightModekey";
 
   static Future init() async {
     pref = await SharedPreferences.getInstance();
@@ -25,5 +26,13 @@ class UserPreferences {
 
   static List<String>? getHistory() {
     return pref.getStringList(_historyKey);
+  }
+
+  static Future setLightMode(lightMode) async {
+    await pref.setString(_lightModeKey, lightMode);
+  }
+
+  static String? getLightMode() {
+    return pref.getString(_lightModeKey);
   }
 }

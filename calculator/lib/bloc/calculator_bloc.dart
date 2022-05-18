@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:calculator/data_management/ManageData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../data_management/UserPreferences.dart';
 import '../models/CalculatorModel.dart';
@@ -268,23 +269,17 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       } else {
         user = FirebaseAuth.instance.currentUser;
         result = await ManageData.getRecent(user!.email!);
-        lightMode = await ManageData.getLightMode(user!.email!);
+        lightMode = UserPreferences.getLightMode();
         emit(CalculatorLoaded(
             calculator: CalculatorModel(result: (result ?? 0)),
             lightMode: lightMode ?? 'Light Mode'));
       }
     }));
 
-    on<UpdateLightMode>(((event, emit) {
+    on<UpdateLightMode>(((event, emit) async {
       CalculatorLoaded oldState = this.state as CalculatorLoaded;
 
-      if (user != null) {
-        final userLightMode = <String, dynamic>{
-          "lightMode": event.lightMode,
-        };
-
-        ManageData.updateLightMode(userLightMode, user!.email!);
-      }
+      await UserPreferences.setLightMode(event.lightMode);
       emit(CalculatorLoaded(
           calculator: oldState.calculator, lightMode: event.lightMode));
     }));
