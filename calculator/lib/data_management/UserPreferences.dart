@@ -6,6 +6,7 @@ class UserPreferences {
   static const _historyKey = "historyKey";
   static const _lightModeKey = "lightModekey";
   static const _userKey = "userKey";
+  static const _syncKey = 'syncKey';
 
   static Future init() async {
     pref = await SharedPreferences.getInstance();
@@ -43,5 +44,13 @@ class UserPreferences {
 
   static String? getUser() {
     return pref.getString(_userKey);
+  }
+
+  static Future setSync(isSync) async {
+    await pref.setBool(_syncKey, isSync);
+  }
+
+  static bool? getSync() {
+    return pref.getBool(_syncKey);
   }
 }

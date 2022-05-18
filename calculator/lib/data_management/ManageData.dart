@@ -37,4 +37,12 @@ class ManageData {
     }
     return recentCalc.data()!['lightMode'];
   }
+
+  static Future<QuerySnapshot<Map<String, dynamic>>> getCollection(
+      userEmail) async {
+    QuerySnapshot<Map<String, dynamic>> collection =
+        await db.collection(userEmail).get();
+
+    return collection;
+  }
 }

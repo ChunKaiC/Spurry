@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:calculator/data_management/ManageData.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -100,23 +101,26 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       res = (double.parse(x) + double.parse(y));
     }
 
+    String uid;
+
     if (method == LoginMethod.anon) {
-      UserPreferences.setResult(res);
-      UserPreferences.addHistory(
-          "${double.parse(x)} $op ${double.parse(y)} = $res");
+      uid = UserPreferences.getUser()!;
+      UserPreferences.setSync(false);
     } else {
-      final DateTime date = DateTime.now();
-
-      // To save history
-      final userCalculation = <String, dynamic>{
-        "x": double.parse(x),
-        'operation': op,
-        'y': double.parse(y),
-        "result": res,
-      };
-
-      ManageData.update(userCalculation, user!.email!, date);
+      uid = user!.email!;
     }
+
+    final DateTime date = DateTime.now();
+
+    // To save history
+    final userCalculation = <String, dynamic>{
+      "x": double.parse(x),
+      'operation': op,
+      'y': double.parse(y),
+      "result": res,
+    };
+
+    ManageData.update(userCalculation, uid, date);
 
     return res;
   }
@@ -158,6 +162,7 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
     String? user = UserPreferences.getUser();
 
     if (user == null) {
+      print('CREATED NEW UID!');
       var uuid = Uuid();
 
       // Generate a v4 (random) id
@@ -248,11 +253,40 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       method = event.method;
       if (method == LoginMethod.google) {
         await _googleLogin();
+        user = FirebaseAuth.instance.currentUser;
       } else if (method == LoginMethod.apple) {
         await _appleLogin();
+        user = FirebaseAuth.instance.currentUser;
       } else if (method == LoginMethod.anon) {
         await _unsignedLogin();
-        print('No authentication required.');
+      }
+
+      // Perform sync
+      if (method != LoginMethod.anon) {
+        print('I am a signed user');
+        bool? isSync = UserPreferences.getSync();
+
+        if (!(isSync ?? true)) {
+          print('I need to sync :(');
+          // unisigned user has changes, therefore must sync
+          // append all new changes
+          String unsignedUser = UserPreferences.getUser()!;
+          QuerySnapshot<Map<String, dynamic>> collection =
+              await ManageData.getCollection(unsignedUser);
+
+          collection.docs.forEach((doc) {
+            final converted = <String, dynamic>{
+              "x": doc.data()['x'],
+              'operation': doc.data()['operation'],
+              'y': doc.data()['y'],
+              "result": doc.data()['result'],
+            };
+            ManageData.update(converted, user!.email!, doc.id);
+          });
+
+          UserPreferences.setSync(true);
+          print('I am synced :)');
+        }
       }
 
       emit(CalculatorLoading(method: event.method));
@@ -277,9 +311,9 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       String? lightMode;
       if (method == LoginMethod.anon) {
         lightMode = UserPreferences.getLightMode();
+        result = await ManageData.getRecent(UserPreferences.getUser());
         emit(CalculatorLoaded(
-          calculator:
-              CalculatorModel(result: (UserPreferences.getResult() ?? 0)),
+          calculator: CalculatorModel(result: (result ?? 0)),
           lightMode: lightMode ?? 'Light Mode',
         ));
       } else {
