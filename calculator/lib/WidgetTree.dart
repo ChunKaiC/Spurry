@@ -1,6 +1,7 @@
 import 'package:calculator/bloc/calculator_bloc.dart';
 import 'package:calculator/data_management/ManageData.dart';
 import 'package:calculator/pages/LoginPage.dart';
+import 'package:calculator/pages/SettingPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -59,6 +60,8 @@ class WidgetTree extends StatelessWidget {
         );
       } else if (state is CalculatorLoaded) {
         return CalculatorPage(title: title);
+      } else if (state is CalculatorSettings) {
+        return const SettingPage();
       } else {
         return const Text("Something bad happened :(");
       }

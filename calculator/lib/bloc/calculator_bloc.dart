@@ -230,5 +230,9 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       emit(CalculatorLoaded(
           calculator: oldState.calculator, lightMode: event.lightMode));
     }));
+
+    on<LoadSettings>(((event, emit) {
+      emit(CalculatorSettings());
+    }));
   }
 }

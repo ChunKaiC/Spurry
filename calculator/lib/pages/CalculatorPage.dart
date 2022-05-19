@@ -93,9 +93,10 @@ class CalculatorPage extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
                           child: ElevatedButton(
-                              onPressed: () =>
-                                  context.read<CalculatorBloc>().add(Logout()),
-                              child: const Text('Logout!')),
+                              onPressed: () => context
+                                  .read<CalculatorBloc>()
+                                  .add(LoadSettings()),
+                              child: const Text('Settings')),
                         ),
                       ),
                       const Expanded(child: Text('')),

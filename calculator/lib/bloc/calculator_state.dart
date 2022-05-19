@@ -30,3 +30,5 @@ class CalculatorLoaded extends CalculatorState {
   @override
   List<Object> get props => [calculator, lightMode];
 }
+
+class CalculatorSettings extends CalculatorState {}

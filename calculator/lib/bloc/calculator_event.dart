@@ -39,3 +39,5 @@ class UpdateLightMode extends CalculatorEvent {
   @override
   List<Object> get props => [lightMode];
 }
+
+class LoadSettings extends CalculatorEvent {}
