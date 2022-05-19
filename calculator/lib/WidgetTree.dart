@@ -1,4 +1,5 @@
 import 'package:calculator/bloc/calculator_bloc.dart';
+import 'package:calculator/data_management/ManageData.dart';
 import 'package:calculator/pages/LoginPage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +36,8 @@ class WidgetTree extends StatelessWidget {
                   child: CircularProgressIndicator(),
                 ),
               );
-            } else if (snapshot.hasData || state.method == LoginMethod.anon) {
+            } else if (snapshot.hasData ||
+                state.method == LoginMethod.unsigned) {
               context.read<CalculatorBloc>().add(Load());
               return Container(
                 color: Colors.white,
