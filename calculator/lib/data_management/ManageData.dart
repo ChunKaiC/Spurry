@@ -120,10 +120,7 @@ class ManageData {
   }
 
   static void update(userCalculation, userEmail, date) {
-    db
-        .collection(currentUser!.email!)
-        .doc(date.toString())
-        .set(userCalculation);
+    db.collection(userEmail).doc(date.toString()).set(userCalculation);
 
     db.collection(userEmail).doc('result').set(userCalculation);
   }

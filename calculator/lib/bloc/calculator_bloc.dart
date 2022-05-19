@@ -72,7 +72,6 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
   String? _op;
   String? _prev;
   String? _curr;
-  LoginMethod? method;
 
   CalculatorModel _update({required double num}) {
     return CalculatorModel(result: num);
@@ -93,7 +92,7 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
 
     String uid;
 
-    if (method == LoginMethod.unsigned) {
+    if (ManageData.loginMethod == LoginMethod.unsigned) {
       uid = UserPreferences.getUser()!;
       UserPreferences.setSync(false);
     } else {
@@ -194,6 +193,9 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
 
     on<Login>(((event, emit) async {
       await ManageData.login(event.method);
+      if (event.method == LoginMethod.unsigned) {
+        print('anon');
+      }
       emit(CalculatorLoading(method: event.method));
     }));
 
@@ -209,7 +211,7 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       final double? result;
       final String? lightMode = UserPreferences.getLightMode();
 
-      if (method == LoginMethod.unsigned) {
+      if (ManageData.loginMethod == LoginMethod.unsigned) {
         result = await ManageData.getRecent(UserPreferences.getUser());
       } else {
         user = FirebaseAuth.instance.currentUser;
