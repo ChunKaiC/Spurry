@@ -12,24 +12,6 @@ class UserPreferences {
     pref = await SharedPreferences.getInstance();
   }
 
-  static Future setResult(result) async {
-    await pref.setDouble(_resultKey, result);
-  }
-
-  static double? getResult() {
-    return pref.getDouble(_resultKey);
-  }
-
-  static Future addHistory(hist) async {
-    List<String>? oldHistory = pref.getStringList(_historyKey);
-
-    await pref.setStringList(_historyKey, (oldHistory ?? []) + [hist]);
-  }
-
-  static List<String>? getHistory() {
-    return pref.getStringList(_historyKey);
-  }
-
   static Future setLightMode(lightMode) async {
     await pref.setString(_lightModeKey, lightMode);
   }
