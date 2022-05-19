@@ -1,3 +1,4 @@
+import 'package:calculator/data_management/ManageData.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
@@ -46,7 +47,7 @@ class LoginPage extends StatelessWidget {
                 onPressed: () {
                   context
                       .read<CalculatorBloc>()
-                      .add(const Login(LoginMethod.anon));
+                      .add(const Login(LoginMethod.unsigned));
                 },
                 icon: const FaIcon(FontAwesomeIcons.question),
                 label: const Text('Proceed without logging in'),
