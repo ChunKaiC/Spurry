@@ -46,6 +46,7 @@ dependencies:
   equatable: ^2.0.3
   flutter_bloc: ^8.0.1
   uuid: ^3.0.6
+  flutter_secure_storage: ^5.0.2
 
 dev_dependencies:
   flutter_test:

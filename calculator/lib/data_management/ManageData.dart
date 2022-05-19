@@ -52,7 +52,7 @@ class ManageData {
   }
 
   static Future _unsignedLogin() async {
-    String? user = UserPreferences.getUser();
+    String? user = await UserPreferences.getUser();
 
     if (user == null) {
       print('CREATED NEW UID!');
@@ -92,7 +92,7 @@ class ManageData {
 
       if (!isSync) {
         // unisigned user has changes, therefore must sync
-        final String unsignedUser = UserPreferences.getUser()!;
+        final String unsignedUser = (await UserPreferences.getUser())!;
         final QuerySnapshot<Map<String, dynamic>> collection =
             await ManageData.getCollection(unsignedUser);
 

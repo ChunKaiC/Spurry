@@ -75,7 +75,8 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
     return CalculatorModel(result: num);
   }
 
-  double _eval({required String op, required String x, required String y}) {
+  Future<double> _eval(
+      {required String op, required String x, required String y}) async {
     double res;
 
     if (op == 'x') {
@@ -91,7 +92,7 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
     String uid;
 
     if (ManageData.loginMethod == LoginMethod.unsigned) {
-      uid = UserPreferences.getUser()!;
+      uid = (await UserPreferences.getUser())!;
       UserPreferences.setSync(false);
     } else {
       uid = user!.email!;
@@ -114,7 +115,7 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
 
   // Initializes the calculator
   CalculatorBloc() : super(CalculatorInitial()) {
-    on<OnPress>((event, emit) {
+    on<OnPress>((event, emit) async {
       if (state is CalculatorLoaded) {
         final state = this.state as CalculatorLoaded;
 
@@ -130,7 +131,7 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
             /// Op
             {
               if (_prev != null && _op != null && _curr != null) {
-                double res = _eval(op: _op!, x: _prev!, y: _curr!);
+                double res = await _eval(op: _op!, x: _prev!, y: _curr!);
                 newCalc = _update(num: res);
                 _prev = res.toString();
                 _curr = null;
@@ -146,7 +147,8 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
             // Eval
             {
               if (_prev != null && _op != null && _curr != null) {
-                newCalc = _update(num: _eval(op: _op!, x: _prev!, y: _curr!));
+                newCalc =
+                    _update(num: await _eval(op: _op!, x: _prev!, y: _curr!));
                 _op = _prev = _curr = null;
               }
               break;
@@ -210,7 +212,7 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       final String? lightMode = UserPreferences.getLightMode();
 
       if (ManageData.loginMethod == LoginMethod.unsigned) {
-        result = await ManageData.getRecent(UserPreferences.getUser());
+        result = await ManageData.getRecent(await UserPreferences.getUser());
       } else {
         user = FirebaseAuth.instance.currentUser;
         result = await ManageData.getRecent(user!.email!);
