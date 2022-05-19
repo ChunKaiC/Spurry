@@ -105,6 +105,7 @@ class ManageData {
             "result": doc.data()['result'],
           };
           ManageData.update(converted, currentUser!.email!, doc.id);
+          doc.reference.delete();
         }
 
         // Set sync to true
