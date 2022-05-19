@@ -1,14 +1,11 @@
 import 'package:bloc/bloc.dart';
 import 'package:calculator/data_management/ManageData.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../data_management/UserPreferences.dart';
 import '../models/CalculatorModel.dart';
 import 'package:equatable/equatable.dart';
-import 'package:uuid/uuid.dart';
 part 'calculator_event.dart';
 part 'calculator_state.dart';
 
@@ -70,13 +67,6 @@ extension GetVal on Buttons {
   }
 }
 
-enum LoginMethod {
-  google,
-  apple,
-  anon,
-  loggedInPreviously,
-}
-
 class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
   User? user;
   String? _op;
@@ -103,7 +93,7 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
 
     String uid;
 
-    if (method == LoginMethod.anon) {
+    if (method == LoginMethod.unsigned) {
       uid = UserPreferences.getUser()!;
       UserPreferences.setSync(false);
     } else {
@@ -123,52 +113,6 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
     ManageData.update(userCalculation, uid, date);
 
     return res;
-  }
-
-  Future _googleLogin() async {
-    final googleSignIn = GoogleSignIn();
-
-    final googleUser = await googleSignIn.signIn();
-
-    if (googleUser == null) return;
-
-    final googleAuth = await googleUser.authentication;
-
-    final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken, idToken: googleAuth.idToken);
-
-    await FirebaseAuth.instance.signInWithCredential(credential);
-  }
-
-  Future _appleLogin() async {
-    // authenticate login
-    final credential = await SignInWithApple.getAppleIDCredential(
-      scopes: [
-        AppleIDAuthorizationScopes.email,
-        AppleIDAuthorizationScopes.fullName,
-      ],
-    );
-
-    final oAuthProvider = OAuthProvider('apple.com');
-
-    final newCred = oAuthProvider.credential(
-        accessToken: credential.authorizationCode,
-        idToken: credential.identityToken);
-
-    await FirebaseAuth.instance.signInWithCredential(newCred);
-  }
-
-  Future _unsignedLogin() async {
-    String? user = UserPreferences.getUser();
-
-    if (user == null) {
-      print('CREATED NEW UID!');
-      var uuid = Uuid();
-
-      // Generate a v4 (random) id
-      UserPreferences.setUser(
-          uuid.v4()); // -> '110ec58a-a0f2-4ac4-8393-c866d813b8d1'
-    }
   }
 
   // Initializes the calculator
@@ -249,57 +193,12 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
     });
 
     on<Login>(((event, emit) async {
-      // Login based on method chosen
-      method = event.method;
-      if (method == LoginMethod.google) {
-        await _googleLogin();
-        user = FirebaseAuth.instance.currentUser;
-      } else if (method == LoginMethod.apple) {
-        await _appleLogin();
-        user = FirebaseAuth.instance.currentUser;
-      } else if (method == LoginMethod.anon) {
-        await _unsignedLogin();
-      }
-
-      // Perform sync
-      if (method != LoginMethod.anon) {
-        print('I am a signed user');
-        bool? isSync = UserPreferences.getSync();
-
-        if (!(isSync ?? true)) {
-          print('I need to sync :(');
-          // unisigned user has changes, therefore must sync
-          // append all new changes
-          String unsignedUser = UserPreferences.getUser()!;
-          QuerySnapshot<Map<String, dynamic>> collection =
-              await ManageData.getCollection(unsignedUser);
-
-          collection.docs.forEach((doc) {
-            final converted = <String, dynamic>{
-              "x": doc.data()['x'],
-              'operation': doc.data()['operation'],
-              'y': doc.data()['y'],
-              "result": doc.data()['result'],
-            };
-            ManageData.update(converted, user!.email!, doc.id);
-          });
-
-          UserPreferences.setSync(true);
-          print('I am synced :)');
-        }
-      }
-
+      await ManageData.login(event.method);
       emit(CalculatorLoading(method: event.method));
     }));
 
     on<Logout>(((event, emit) async {
-      // if (type == SignInType.google) {
-      //   final googleSignIn = GoogleSignIn();
-      //   await googleSignIn.disconnect();
-      // } else if (type == SignInType.apple) {
-      //   print('Signing out from apple device!');
-      // }
-      FirebaseAuth.instance.signOut();
+      await ManageData.logout();
       emit(CalculatorLogin());
     }));
 
@@ -307,23 +206,19 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       // Clear previous inputs
       _curr = _op = _prev = null;
 
-      double? result;
-      String? lightMode;
-      if (method == LoginMethod.anon) {
-        lightMode = UserPreferences.getLightMode();
+      final double? result;
+      final String? lightMode = UserPreferences.getLightMode();
+
+      if (method == LoginMethod.unsigned) {
         result = await ManageData.getRecent(UserPreferences.getUser());
-        emit(CalculatorLoaded(
-          calculator: CalculatorModel(result: (result ?? 0)),
-          lightMode: lightMode ?? 'Light Mode',
-        ));
       } else {
         user = FirebaseAuth.instance.currentUser;
         result = await ManageData.getRecent(user!.email!);
-        lightMode = UserPreferences.getLightMode();
-        emit(CalculatorLoaded(
-            calculator: CalculatorModel(result: (result ?? 0)),
-            lightMode: lightMode ?? 'Light Mode'));
       }
+
+      emit(CalculatorLoaded(
+          calculator: CalculatorModel(result: (result ?? 0)),
+          lightMode: lightMode ?? 'Light Mode'));
     }));
 
     on<UpdateLightMode>(((event, emit) async {
