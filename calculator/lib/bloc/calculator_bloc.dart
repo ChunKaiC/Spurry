@@ -1,8 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:calculator/data_management/ManageData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../data_management/UserPreferences.dart';
 import '../models/CalculatorModel.dart';
 import 'package:equatable/equatable.dart';
