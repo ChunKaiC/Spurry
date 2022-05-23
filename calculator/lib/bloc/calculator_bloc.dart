@@ -3,6 +3,7 @@ import 'package:calculator/data_management/ManageData.dart';
 import 'package:calculator/data_management/UserPreferences.dart';
 import 'package:calculator/models/CalculatorModel.dart';
 import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 part 'calculator_event.dart';
 part 'calculator_state.dart';
 
@@ -93,7 +94,7 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       uid = (await UserPreferences.getUser())!;
       UserPreferences.setSync(false);
     } else {
-      uid = ManageData.currentUser!.email!;
+      uid = FirebaseAuth.instance.currentUser!.email!;
     }
 
     final DateTime date = DateTime.now();
@@ -209,7 +210,8 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       if (ManageData.loginMethod == LoginMethod.unsigned) {
         result = await ManageData.getRecent(await UserPreferences.getUser());
       } else {
-        result = await ManageData.getRecent(ManageData.currentUser!.email!);
+        result = await ManageData.getRecent(
+            FirebaseAuth.instance.currentUser!.email!);
       }
 
       emit(CalculatorLoaded(

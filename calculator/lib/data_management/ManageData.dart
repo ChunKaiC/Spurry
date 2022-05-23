@@ -15,7 +15,6 @@ enum LoginMethod {
 // This is a static singleton. Must be initialized in main.
 class ManageData {
   static late FirebaseFirestore db;
-  static User? currentUser;
   static LoginMethod? loginMethod;
 
   static Future _googleLogin() async {
@@ -53,7 +52,6 @@ class ManageData {
 
   static Future _unsignedLogin() async {
     String? user = await UserPreferences.getUser();
-    currentUser = null;
 
     if (user == null) {
       print('CREATED NEW UID!');
@@ -79,13 +77,10 @@ class ManageData {
     // Login based on method chosen
     if (loginMethod == LoginMethod.google) {
       await _googleLogin();
-      currentUser = FirebaseAuth.instance.currentUser;
     } else if (loginMethod == LoginMethod.apple) {
       await _appleLogin();
-      currentUser = FirebaseAuth.instance.currentUser;
     } else if (loginMethod == LoginMethod.unsigned) {
       await _unsignedLogin();
-      currentUser = null;
     }
 
     // Perform sync if last session was unsigned
@@ -106,7 +101,8 @@ class ManageData {
             'y': doc.data()['y'],
             "result": doc.data()['result'],
           };
-          ManageData.update(converted, currentUser!.email!, doc.id);
+          ManageData.update(
+              converted, FirebaseAuth.instance.currentUser!.email!, doc.id);
           doc.reference.delete();
         }
 
@@ -119,7 +115,6 @@ class ManageData {
   static Future logout() async {
     // Log the user out of Firebase
     FirebaseAuth.instance.signOut();
-    currentUser = null;
   }
 
   static void update(userCalculation, userEmail, date) {

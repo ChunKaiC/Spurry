@@ -25,6 +25,15 @@ class WidgetTree extends StatelessWidget {
           ),
         );
       } else if (state is CalculatorLogin) {
+        if (FirebaseAuth.instance.currentUser != null) {
+          context.read<CalculatorBloc>().add(Load());
+          return Container(
+            color: Colors.white,
+            child: const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
         return const LoginPage();
       } else if (state is CalculatorLoading) {
         return StreamBuilder(
