@@ -53,10 +53,11 @@ class ManageData {
 
   static Future _unsignedLogin() async {
     String? user = await UserPreferences.getUser();
+    currentUser = null;
 
     if (user == null) {
       print('CREATED NEW UID!');
-      var uuid = Uuid();
+      final uuid = Uuid();
 
       // Generate a v4 (random) id
       UserPreferences.setUser(
@@ -84,10 +85,11 @@ class ManageData {
       currentUser = FirebaseAuth.instance.currentUser;
     } else if (loginMethod == LoginMethod.unsigned) {
       await _unsignedLogin();
+      currentUser = null;
     }
 
     // Perform sync if last session was unsigned
-    if (method != LoginMethod.unsigned) {
+    if (loginMethod != LoginMethod.unsigned) {
       final bool isSync = UserPreferences.getSync() ?? true;
 
       if (!isSync) {

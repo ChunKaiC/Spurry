@@ -6,30 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'data_management/UserPreferences.dart';
 import 'package:firebase_core/firebase_core.dart';
 
-const int topPad = 20;
-const int infoHeight = 50;
-const int resultHeight = 100;
-const int avatarWidth = 100;
-
-enum Buttons {
-  seven,
-  eight,
-  nine,
-  mult,
-  four,
-  five,
-  six,
-  div,
-  one,
-  two,
-  three,
-  sub,
-  clear,
-  zero,
-  eq,
-  add,
-}
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();

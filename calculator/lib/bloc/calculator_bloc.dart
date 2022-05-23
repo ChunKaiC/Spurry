@@ -1,8 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:calculator/data_management/ManageData.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../data_management/UserPreferences.dart';
-import '../models/CalculatorModel.dart';
+import 'package:calculator/data_management/UserPreferences.dart';
+import 'package:calculator/models/CalculatorModel.dart';
 import 'package:equatable/equatable.dart';
 part 'calculator_event.dart';
 part 'calculator_state.dart';
@@ -66,7 +65,6 @@ extension GetVal on Buttons {
 }
 
 class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
-  User? user;
   String? _op;
   String? _prev;
   String? _curr;
@@ -95,7 +93,7 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       uid = (await UserPreferences.getUser())!;
       UserPreferences.setSync(false);
     } else {
-      uid = user!.email!;
+      uid = ManageData.currentUser!.email!;
     }
 
     final DateTime date = DateTime.now();
@@ -193,9 +191,6 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
 
     on<Login>(((event, emit) async {
       await ManageData.login(event.method);
-      if (event.method == LoginMethod.unsigned) {
-        print('anon');
-      }
       emit(CalculatorLoading(method: event.method));
     }));
 
@@ -214,8 +209,7 @@ class CalculatorBloc extends Bloc<CalculatorEvent, CalculatorState> {
       if (ManageData.loginMethod == LoginMethod.unsigned) {
         result = await ManageData.getRecent(await UserPreferences.getUser());
       } else {
-        user = FirebaseAuth.instance.currentUser;
-        result = await ManageData.getRecent(user!.email!);
+        result = await ManageData.getRecent(ManageData.currentUser!.email!);
       }
 
       emit(CalculatorLoaded(
