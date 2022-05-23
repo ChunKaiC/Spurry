@@ -57,9 +57,8 @@ class ManageData {
       print('CREATED NEW UID!');
       final uuid = Uuid();
 
-      // Generate a v4 (random) id
       UserPreferences.setUser(
-          uuid.v4()); // -> '110ec58a-a0f2-4ac4-8393-c866d813b8d1'
+          uuid.v4()); 
     }
   }
 
