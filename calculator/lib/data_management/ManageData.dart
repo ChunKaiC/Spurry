@@ -57,8 +57,7 @@ class ManageData {
       print('CREATED NEW UID!');
       final uuid = Uuid();
 
-      UserPreferences.setUser(
-          uuid.v4()); 
+      UserPreferences.setUser(uuid.v4());
     }
   }
 
@@ -113,7 +112,7 @@ class ManageData {
 
   static Future logout() async {
     // Log the user out of Firebase
-    FirebaseAuth.instance.signOut();
+    await FirebaseAuth.instance.signOut();
   }
 
   static void update(userCalculation, userEmail, date) {
