@@ -55,6 +55,23 @@ class SettingPage extends StatelessWidget {
               ),
               ElevatedButton(
                   onPressed: () {
+                    showDialog<String>(
+                      context: context,
+                      builder: (BuildContext context) => const AlertDialog(
+                        title: Text('Notification Alert'),
+                        content: Text('Updated notification settings :)'),
+                        // actions: <Widget>[
+                        //   TextButton(
+                        //     onPressed: () => Navigator.pop(context, 'Cancel'),
+                        //     child: const Text('Cancel'),
+                        //   ),
+                        //   TextButton(
+                        //     onPressed: () => Navigator.pop(context, 'OK'),
+                        //     child: const Text('OK'),
+                        //   ),
+                        // ],
+                      ),
+                    );
                     NotificationAPI.weeklyNotifications(
                         title: 'ProtoCalculator',
                         body: 'Time to practice nerd.',
