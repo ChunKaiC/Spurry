@@ -10,13 +10,14 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 // mon - sun
 final selectDays = [false, false, false, false, false, false, false];
-DateTime selectTime = DateTime.now();
+late DateTime selectTime;
 
 class SettingPage extends StatelessWidget {
   const SettingPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    selectTime = DateTime.now();
     return Scaffold(
         appBar: AppBar(
           title: const Center(child: Text('Settings')),
@@ -48,7 +49,7 @@ class SettingPage extends StatelessWidget {
                   mode: CupertinoDatePickerMode.time,
                   onDateTimeChanged: (value) {
                     selectTime = value;
-                    print(selectTime);
+                    //print(selectTime);
                   },
                   initialDateTime: selectTime,
                 ),
