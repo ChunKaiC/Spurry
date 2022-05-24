@@ -1,6 +1,7 @@
 import 'package:calculator/data_management/ManageData.dart';
 import 'package:calculator/WidgetTree.dart';
 import 'package:calculator/bloc/calculator_bloc.dart';
+import 'package:calculator/data_management/Notification.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'data_management/UserPreferences.dart';
@@ -11,6 +12,7 @@ Future<void> main() async {
   await Firebase.initializeApp();
   await UserPreferences.init();
   ManageData.init();
+  NotificationAPI.init(initScheduled: true);
 
   runApp(const MyApp());
 }
