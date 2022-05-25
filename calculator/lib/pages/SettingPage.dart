@@ -1,15 +1,18 @@
 import 'package:calculator/bloc/calculator_bloc.dart';
 import 'package:calculator/data_management/ManageData.dart';
 import 'package:calculator/data_management/Notification.dart';
+import 'package:calculator/data_management/UserPreferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
-// mon - sun
-final selectDays = [false, false, false, false, false, false, false];
+// use shared preference instead
+final selectedDays = [false, false, false, false, false, false, false];
 late DateTime selectTime;
 
 class SettingPage extends StatelessWidget {
@@ -17,7 +20,9 @@ class SettingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    selectTime = DateTime.now();
+    final String timeString =
+        UserPreferences.getTime() ?? DateTime.now().toString();
+    selectTime = DateTime.parse(timeString);
     return Scaffold(
         appBar: AppBar(
           title: const Center(child: Text('Settings')),
@@ -27,60 +32,9 @@ class SettingPage extends StatelessWidget {
             children: [
               const SizedBox(
                 width: 200,
-                height: 50,
+                height: 10,
               ),
-              const SizedBox(height: 50),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: const [
-                  MyCheckbox(id: 'Sun'),
-                  MyCheckbox(id: 'Mon'),
-                  MyCheckbox(id: 'Tue'),
-                  MyCheckbox(id: 'Wed'),
-                  MyCheckbox(id: 'Thu'),
-                  MyCheckbox(id: 'Fri'),
-                  MyCheckbox(id: 'Sat'),
-                ],
-              ),
-              SizedBox(
-                height: 200,
-                child: CupertinoDatePicker(
-                  mode: CupertinoDatePickerMode.time,
-                  onDateTimeChanged: (value) {
-                    selectTime = value;
-                    //print(selectTime);
-                  },
-                  initialDateTime: selectTime,
-                ),
-              ),
-              ElevatedButton(
-                  onPressed: () {
-                    showDialog<String>(
-                      context: context,
-                      builder: (BuildContext context) => const AlertDialog(
-                        title: Text('Notification Alert'),
-                        content: Text('Updated notification settings :)'),
-                        // actions: <Widget>[
-                        //   TextButton(
-                        //     onPressed: () => Navigator.pop(context, 'Cancel'),
-                        //     child: const Text('Cancel'),
-                        //   ),
-                        //   TextButton(
-                        //     onPressed: () => Navigator.pop(context, 'OK'),
-                        //     child: const Text('OK'),
-                        //   ),
-                        // ],
-                      ),
-                    );
-                    NotificationAPI.weeklyNotifications(
-                        title: 'ProtoCalculator',
-                        body: 'Time to practice nerd.',
-                        payload: 'reminder',
-                        scheduleDays: selectDays,
-                        scheduleTime: selectTime);
-                  },
-                  child: const Text('Set notifications')),
+              const NotificationSwitch(),
               ElevatedButton(
                 onPressed: () {
                   context.read<CalculatorBloc>().add(Load());
@@ -133,27 +87,150 @@ class _MyCheckboxState extends State<MyCheckbox> {
           value: isChecked,
           onChanged: (bool? value) {
             setState(() {
+              final id;
               if (widget.id == 'Sun') {
-                selectDays[6] = !selectDays[6];
+                selectedDays[6] = !selectedDays[6];
+                id = 6;
               } else if (widget.id == 'Mon') {
-                selectDays[0] = !selectDays[0];
+                selectedDays[0] = !selectedDays[0];
+                id = 0;
               } else if (widget.id == 'Tue') {
-                selectDays[1] = !selectDays[1];
+                selectedDays[1] = !selectedDays[1];
+                id = 1;
               } else if (widget.id == 'Wed') {
-                selectDays[2] = !selectDays[2];
+                selectedDays[2] = !selectedDays[2];
+                id = 2;
               } else if (widget.id == 'Thu') {
-                selectDays[3] = !selectDays[3];
+                selectedDays[3] = !selectedDays[3];
+                id = 3;
               } else if (widget.id == 'Fri') {
-                selectDays[4] = !selectDays[4];
-              } else if (widget.id == 'Sat') {
-                selectDays[5] = !selectDays[5];
+                selectedDays[4] = !selectedDays[4];
+                id = 4;
+              } else {
+                selectedDays[5] = !selectedDays[5];
+                id = 5;
               }
-              print('Current checklist: $selectDays');
-              isChecked = value!;
+
+              if (value!) {
+                print('Notification set for ${widget.id} at $selectTime');
+                NotificationAPI.weeklyNotifications(
+                    id: id,
+                    title: 'ProtoCalculator',
+                    body: 'Time to practice nerd.',
+                    payload: 'reminder',
+                    scheduleTime: selectTime);
+              } else {
+                NotificationAPI.cancel(id);
+              }
+              isChecked = value;
             });
           },
         ),
       ],
     );
+  }
+}
+
+class NotificationSwitch extends StatefulWidget {
+  const NotificationSwitch({Key? key}) : super(key: key);
+
+  @override
+  _NotificationSwitchState createState() {
+    return _NotificationSwitchState();
+  }
+}
+
+class _NotificationSwitchState extends State<NotificationSwitch> {
+  bool state = UserPreferences.getNotification() ?? false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          color: Colors.blue,
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            const Text(
+              'Notification Switch',
+              style: TextStyle(color: Colors.white),
+            ),
+            CupertinoSwitch(
+              activeColor: Colors.blue[200],
+              value: state,
+              onChanged: (value) {
+                if (value) {
+                  print('Notification Enabled');
+                } else {
+                  print('Notification Disabled');
+                  NotificationAPI.cancelAll();
+                }
+                state = value;
+                UserPreferences.setNotification(value);
+                setState(() {});
+              },
+            )
+          ]),
+        ),
+        const SizedBox(height: 20),
+        state
+            ? Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  MyCheckbox(id: 'Sun'),
+                  MyCheckbox(id: 'Mon'),
+                  MyCheckbox(id: 'Tue'),
+                  MyCheckbox(id: 'Wed'),
+                  MyCheckbox(id: 'Thu'),
+                  MyCheckbox(id: 'Fri'),
+                  MyCheckbox(id: 'Sat'),
+                ],
+              )
+            : const Text(''),
+        state ? const PopUpTimePicker() : const Text(''),
+      ],
+    );
+  }
+}
+
+class PopUpTimePicker extends StatefulWidget {
+  const PopUpTimePicker({Key? key}) : super(key: key);
+
+  @override
+  _PopUpTimePickerState createState() {
+    return _PopUpTimePickerState();
+  }
+}
+
+class _PopUpTimePickerState extends State<PopUpTimePicker> {
+  TimeOfDay selectedTime = TimeOfDay.fromDateTime(selectTime);
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        _selectTime(context);
+      },
+      child: const Text("Choose Time"),
+    );
+  }
+
+  _selectTime(BuildContext context) async {
+    final TimeOfDay? timeOfDay = await showTimePicker(
+      context: context,
+      initialTime: selectedTime,
+      initialEntryMode: TimePickerEntryMode.dial,
+    );
+    if (timeOfDay != null && timeOfDay != selectedTime) {
+      setState(() {
+        selectedTime = timeOfDay;
+        //global
+        final now = DateTime.now();
+        final String timeString = DateTime(
+                now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute)
+            .toString();
+        print(timeString);
+        UserPreferences.setTime(timeString);
+      });
+    }
   }
 }

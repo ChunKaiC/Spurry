@@ -7,6 +7,9 @@ class UserPreferences {
   static const _lightModeKey = "lightModekey";
   static const _userKey = "userKey";
   static const _syncKey = 'syncKey';
+  static const _timeKey = 'timeKey';
+  static const _scheduleKey = 'scheduleKey';
+  static const _notificationKey = 'notificationKey';
 
   static Future init() async {
     pref = await SharedPreferences.getInstance();
@@ -36,5 +39,29 @@ class UserPreferences {
 
   static bool? getSync() {
     return pref.getBool(_syncKey);
+  }
+
+  static setTime(String time) async {
+    await pref.setString(_timeKey, time);
+  }
+
+  static String? getTime() {
+    return pref.getString(_timeKey);
+  }
+
+  static setSchedule(List<String> schedule) async {
+    await pref.setStringList(_scheduleKey, schedule);
+  }
+
+  static List<String>? getSchedule() {
+    return pref.getStringList(_scheduleKey);
+  }
+
+  static setNotification(bool notification) async {
+    await pref.setBool(_notificationKey, notification);
+  }
+
+  static bool? getNotification() {
+    return pref.getBool(_notificationKey);
   }
 }
