@@ -1,18 +1,17 @@
 import 'package:calculator/bloc/calculator_bloc.dart';
-import 'package:calculator/data_management/ManageData.dart';
 import 'package:calculator/data_management/Notification.dart';
 import 'package:calculator/data_management/UserPreferences.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notification_permissions/notification_permissions.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 // use shared preference instead
-final selectedDays = [false, false, false, false, false, false, false];
+late List<String> selectedDays;
 late DateTime selectTime;
 
 class SettingPage extends StatelessWidget {
@@ -23,6 +22,22 @@ class SettingPage extends StatelessWidget {
     final String timeString =
         UserPreferences.getTime() ?? DateTime.now().toString();
     selectTime = DateTime.parse(timeString);
+
+    if (UserPreferences.getSchedule() == null) {
+      selectedDays = [
+        'false',
+        'false',
+        'false',
+        'false',
+        'false',
+        'false',
+        'false'
+      ];
+      UserPreferences.setSchedule(selectedDays);
+    } else {
+      selectedDays = UserPreferences.getSchedule()!;
+    }
+
     return Scaffold(
         appBar: AppBar(
           title: const Center(child: Text('Settings')),
@@ -62,10 +77,25 @@ class MyCheckbox extends StatefulWidget {
 }
 
 class _MyCheckboxState extends State<MyCheckbox> {
-  bool isChecked = false;
-
   @override
   Widget build(BuildContext context) {
+    bool isChecked;
+    if (widget.id == 'Sun') {
+      isChecked = selectedDays[6] == 'true';
+    } else if (widget.id == 'Mon') {
+      isChecked = selectedDays[0] == 'true';
+    } else if (widget.id == 'Tue') {
+      isChecked = selectedDays[1] == 'true';
+    } else if (widget.id == 'Wed') {
+      isChecked = selectedDays[2] == 'true';
+    } else if (widget.id == 'Thu') {
+      isChecked = selectedDays[3] == 'true';
+    } else if (widget.id == 'Fri') {
+      isChecked = selectedDays[4] == 'true';
+    } else {
+      isChecked = selectedDays[5] == 'true';
+    }
+
     Color getColor(Set<MaterialState> states) {
       const Set<MaterialState> interactiveStates = <MaterialState>{
         MaterialState.pressed,
@@ -89,30 +119,32 @@ class _MyCheckboxState extends State<MyCheckbox> {
             setState(() {
               final id;
               if (widget.id == 'Sun') {
-                selectedDays[6] = !selectedDays[6];
+                selectedDays[6] = (!(selectedDays[6] == 'true')).toString();
                 id = 6;
               } else if (widget.id == 'Mon') {
-                selectedDays[0] = !selectedDays[0];
+                selectedDays[0] = (!(selectedDays[0] == 'true')).toString();
                 id = 0;
               } else if (widget.id == 'Tue') {
-                selectedDays[1] = !selectedDays[1];
+                selectedDays[1] = (!(selectedDays[1] == 'true')).toString();
                 id = 1;
               } else if (widget.id == 'Wed') {
-                selectedDays[2] = !selectedDays[2];
+                selectedDays[2] = (!(selectedDays[2] == 'true')).toString();
                 id = 2;
               } else if (widget.id == 'Thu') {
-                selectedDays[3] = !selectedDays[3];
+                selectedDays[3] = (!(selectedDays[3] == 'true')).toString();
                 id = 3;
               } else if (widget.id == 'Fri') {
-                selectedDays[4] = !selectedDays[4];
+                selectedDays[4] = (!(selectedDays[4] == 'true')).toString();
                 id = 4;
               } else {
-                selectedDays[5] = !selectedDays[5];
+                selectedDays[5] = (!(selectedDays[5] == 'true')).toString();
                 id = 5;
               }
 
+              UserPreferences.setSchedule(selectedDays);
+
               if (value!) {
-                print('Notification set for ${widget.id} at $selectTime');
+                print('Notification SET for ${widget.id} at $selectTime');
                 NotificationAPI.weeklyNotifications(
                     id: id,
                     title: 'ProtoCalculator',
@@ -120,6 +152,7 @@ class _MyCheckboxState extends State<MyCheckbox> {
                     payload: 'reminder',
                     scheduleTime: selectTime);
               } else {
+                print('Notification CLEARED for ${widget.id} at $selectTime');
                 NotificationAPI.cancel(id);
               }
               isChecked = value;
@@ -159,9 +192,20 @@ class _NotificationSwitchState extends State<NotificationSwitch> {
               value: state,
               onChanged: (value) {
                 if (value) {
-                  print('Notification Enabled');
+                  print('Notification Enabled: RESCHEDULED ALL');
+                  // Update all valid days
+                  for (var id = 0; id < 7; id++) {
+                    if (selectedDays[id] == 'true') {
+                      NotificationAPI.weeklyNotifications(
+                          id: id,
+                          title: 'ProtoCalculator',
+                          body: 'Time to practice nerd.',
+                          payload: 'reminder',
+                          scheduleTime: selectTime);
+                    }
+                  }
                 } else {
-                  print('Notification Disabled');
+                  print('Notification Disabled: CLEARED ALL');
                   NotificationAPI.cancelAll();
                 }
                 state = value;
@@ -228,8 +272,21 @@ class _PopUpTimePickerState extends State<PopUpTimePicker> {
         final String timeString = DateTime(
                 now.year, now.month, now.day, timeOfDay.hour, timeOfDay.minute)
             .toString();
+        selectTime = DateTime.parse(timeString);
         print(timeString);
         UserPreferences.setTime(timeString);
+
+        // Update all valid days
+        for (var id = 0; id < 7; id++) {
+          if (selectedDays[id] == 'true') {
+            NotificationAPI.weeklyNotifications(
+                id: id,
+                title: 'ProtoCalculator',
+                body: 'Time to practice nerd.',
+                payload: 'reminder',
+                scheduleTime: selectTime);
+          }
+        }
       });
     }
   }

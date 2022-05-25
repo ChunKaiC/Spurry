@@ -1,4 +1,5 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:notification_permissions/notification_permissions.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_native_timezone/flutter_native_timezone.dart';
@@ -11,8 +12,11 @@ class NotificationAPI {
   static late AndroidNotificationDetails _androidNotificationDetails;
   static late IOSNotificationDetails _iosNotificationDetails;
   static late NotificationDetails _notificationDetails;
+  static late PermissionStatus permission;
 
   static Future init({bool initScheduled = false}) async {
+    permission =
+        await NotificationPermissions.getNotificationPermissionStatus();
     // Initialize time
     if (initScheduled) {
       tz.initializeTimeZones();
@@ -45,6 +49,11 @@ class NotificationAPI {
         android: _androidNotificationDetails, iOS: _iosNotificationDetails);
   }
 
+  static updatePermission() async {
+    permission =
+        await NotificationPermissions.getNotificationPermissionStatus();
+  }
+
   // Show notification at specified time on specified days
   static weeklyNotifications(
       {int id = 0,
@@ -52,9 +61,6 @@ class NotificationAPI {
       String? body,
       String? payload,
       required DateTime scheduleTime}) async {
-    // Cancel previous notifications
-    _notificationsPlugin.cancelAll();
-
     // Fit time
     var fittedTime = _scheduleDaily(scheduleTime);
 
