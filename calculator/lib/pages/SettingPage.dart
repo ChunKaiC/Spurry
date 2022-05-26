@@ -305,7 +305,8 @@ class _PopUpTimePickerState extends State<PopUpTimePicker> {
       onPressed: () {
         _selectTime(context);
       },
-      child: const Text("Choose Time"),
+      child: Text(
+          "Current Time: ${selectTime.hour.toString().padLeft(2, '0')}:${selectTime.minute.toString().padLeft(2, '0')}"),
     );
   }
 
