@@ -55,14 +55,14 @@ class NotificationAPI {
   }
 
   // Show notification at specified time on specified days
-  static weeklyNotifications(
+  static setWeeklyNotifications(
       {int id = 0,
       String? title,
       String? body,
       String? payload,
       required DateTime scheduleTime}) async {
     // Fit time
-    var fittedTime = _scheduleDaily(scheduleTime);
+    var fittedTime = _fitTime(scheduleTime, id);
 
     // IMPORTANT! notification id must be unique!!!!!
     await _notificationsPlugin.zonedSchedule(
@@ -75,14 +75,16 @@ class NotificationAPI {
   }
 
   // Schedule for same day or the next!
-  static tz.TZDateTime _scheduleDaily(DateTime time) {
+  static tz.TZDateTime _fitTime(DateTime time, int weekday) {
     final now = tz.TZDateTime.now(tz.local);
     final scheduleDate = tz.TZDateTime(tz.local, now.year, now.month, now.day,
         time.hour, time.minute, time.second);
 
-    return scheduleDate.isBefore(now)
-        ? scheduleDate.add(const Duration(days: 1))
-        : scheduleDate;
+    final currentWeekday = scheduleDate.weekday;
+    final diffToTarget = (currentWeekday - weekday).abs();
+    final fittedTime = scheduleDate.subtract(Duration(days: diffToTarget));
+
+    return fittedTime;
   }
 
   static cancelAll() async {
