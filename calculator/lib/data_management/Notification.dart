@@ -80,8 +80,8 @@ class NotificationAPI {
     final scheduleDate = tz.TZDateTime(tz.local, now.year, now.month, now.day,
         time.hour, time.minute, time.second);
 
-    final currentWeekday = scheduleDate.weekday;
-    final diffToTarget = (currentWeekday - weekday).abs();
+    final currentWeekday = scheduleDate.weekday - 1;
+    final diffToTarget = (currentWeekday - weekday);
     final fittedTime = scheduleDate.subtract(Duration(days: diffToTarget));
 
     return fittedTime;
@@ -104,5 +104,9 @@ class NotificationAPI {
   // When user taps the notification for ANDRIOD
   static void selectNotification(String? payload) {
     return;
+  }
+
+  static pendingNotificationRequest() async {
+    print(await _notificationsPlugin.pendingNotificationRequests());
   }
 }
