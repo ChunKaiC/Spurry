@@ -172,7 +172,52 @@ class NotificationSwitch extends StatefulWidget {
 //TODO
 class _NotificationSwitchState extends State<NotificationSwitch>
     with WidgetsBindingObserver {
-  bool state = UserPreferences.getNotification() ?? false;
+  bool state = NotificationAPI.permission == PermissionStatus.granted &&
+      (UserPreferences.getNotification() ?? true);
+
+  @override
+  void initState() {
+    WidgetsBinding.instance?.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState appState) async {
+    print('state = $appState');
+    if (appState == AppLifecycleState.resumed) {
+      await NotificationAPI.updatePermission();
+      print('Updated permissions: ${NotificationAPI.permission}');
+      if (NotificationAPI.permission == PermissionStatus.granted) {
+        // schedule all
+        print('Notification Enabled: RESCHEDULED ALL');
+        // Update all valid days
+        for (var id = 0; id < 7; id++) {
+          if (selectedDays[id] == 'true') {
+            NotificationAPI.setWeeklyNotifications(
+                id: id,
+                title: 'ProtoCalculator',
+                body: 'Time to practice nerd.',
+                payload: 'reminder',
+                scheduleTime: selectTime);
+          }
+        }
+      } else if (NotificationAPI.permission == PermissionStatus.denied) {
+        print('Notification Enabled: CLEARED ALL');
+        NotificationAPI.cancelAll();
+      }
+
+      state = NotificationAPI.permission == PermissionStatus.granted &&
+          (UserPreferences.getNotification() ?? true);
+
+      setState(() {});
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -189,6 +234,9 @@ class _NotificationSwitchState extends State<NotificationSwitch>
               activeColor: Colors.blue[200],
               value: state,
               onChanged: (value) {
+                if (NotificationAPI.permission != PermissionStatus.granted) {
+                  return;
+                }
                 if (value) {
                   print('Notification Enabled: RESCHEDULED ALL');
                   // Update all valid days
@@ -206,7 +254,10 @@ class _NotificationSwitchState extends State<NotificationSwitch>
                   print('Notification Disabled: CLEARED ALL');
                   NotificationAPI.cancelAll();
                 }
-                state = value;
+                state =
+                    NotificationAPI.permission == PermissionStatus.granted &&
+                        value;
+
                 UserPreferences.setNotification(value);
                 setState(() {});
               },
@@ -214,7 +265,7 @@ class _NotificationSwitchState extends State<NotificationSwitch>
           ]),
         ),
         const SizedBox(height: 20),
-        state
+        state && NotificationAPI.permission == PermissionStatus.granted
             ? Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -229,7 +280,9 @@ class _NotificationSwitchState extends State<NotificationSwitch>
                 ],
               )
             : const Text(''),
-        state ? const PopUpTimePicker() : const Text(''),
+        state && NotificationAPI.permission == PermissionStatus.granted
+            ? const PopUpTimePicker()
+            : const Text(''),
       ],
     );
   }
