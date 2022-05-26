@@ -5,10 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notification_permissions/notification_permissions.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 
 // use shared preference instead
 late List<String> selectedDays;
@@ -145,7 +141,7 @@ class _MyCheckboxState extends State<MyCheckbox> {
 
               if (value!) {
                 print('Notification SET for ${widget.id} at $selectTime');
-                NotificationAPI.weeklyNotifications(
+                NotificationAPI.setWeeklyNotifications(
                     id: id,
                     title: 'ProtoCalculator',
                     body: 'Time to practice nerd.',
@@ -173,7 +169,9 @@ class NotificationSwitch extends StatefulWidget {
   }
 }
 
-class _NotificationSwitchState extends State<NotificationSwitch> {
+//TODO
+class _NotificationSwitchState extends State<NotificationSwitch>
+    with WidgetsBindingObserver {
   bool state = UserPreferences.getNotification() ?? false;
 
   @override
@@ -196,7 +194,7 @@ class _NotificationSwitchState extends State<NotificationSwitch> {
                   // Update all valid days
                   for (var id = 0; id < 7; id++) {
                     if (selectedDays[id] == 'true') {
-                      NotificationAPI.weeklyNotifications(
+                      NotificationAPI.setWeeklyNotifications(
                           id: id,
                           title: 'ProtoCalculator',
                           body: 'Time to practice nerd.',
@@ -279,7 +277,8 @@ class _PopUpTimePickerState extends State<PopUpTimePicker> {
         // Update all valid days
         for (var id = 0; id < 7; id++) {
           if (selectedDays[id] == 'true') {
-            NotificationAPI.weeklyNotifications(
+            print(id);
+            NotificationAPI.setWeeklyNotifications(
                 id: id,
                 title: 'ProtoCalculator',
                 body: 'Time to practice nerd.',
@@ -287,6 +286,7 @@ class _PopUpTimePickerState extends State<PopUpTimePicker> {
                 scheduleTime: selectTime);
           }
         }
+        NotificationAPI.pendingNotificationRequest();
       });
     }
   }
